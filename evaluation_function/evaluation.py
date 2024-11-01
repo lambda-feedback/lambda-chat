@@ -45,13 +45,13 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         include_test_data = params["include_test_data"]
     start_time = time.process_time()
 
-    # chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4()) # TODO: to be replaced by Session ID set by web client
+    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4()) # TODO: to be replaced by Session ID set by web client
     # ########### TESTING
-    chatbot_response = {
-        "input": response,
-        "output": "I am a chatbot. I can help you with your queries.",
-        "intermediate_steps": ["Number of messages sent: 0", "Number of remembered messages:0", "Number of total messages in the conversation: 0"]
-    }
+    # chatbot_response = {
+    #     "input": response,
+    #     "output": "I am a chatbot. I can help you with your queries.",
+    #     "intermediate_steps": ["Number of messages sent: 0", "Number of remembered messages:0", "Number of total messages in the conversation: 0"]
+    # }
     # ########### TESTING
     end_time = time.process_time()
 
