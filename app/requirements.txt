@@ -1,0 +1,11 @@
+langchain
+langchain-anthropic
+langchain-chroma
+langchain-community
+langchain-core
+langchain-openai
+langchain-text-splitters
+langchainhub
+langdetect
+langgraph
+langsmith

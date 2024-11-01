@@ -1,12 +1,15 @@
-from typing import Any, TypedDict
+from typing import Any
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
-from agents.chatbot_summarised_memory_agent import ChatbotAgent
-from agents.profiling_agent import ProfilingAgent
-from evaluation_response import Result
+try:
+    from .agents.chatbot_summarised_memory_agent import ChatbotAgent
+    from .agents.profiling_agent import ProfilingAgent
+    from .evaluation_response import Result, Params
+except ImportError:
+    from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
+    from evaluation_function.agents.profiling_agent import ProfilingAgent
+    from evaluation_function.evaluation_response import Result, Params
 import time
-
-class Params(TypedDict):
-    pass
+import uuid
 
 chatbot_agent = ChatbotAgent(len_memory=4)
 profiling_agent = ProfilingAgent()
@@ -34,6 +37,7 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     return types and that evaluation_function() is the main function used
     to output the evaluation response.
     """
+
     result = Result(is_correct=True)
     include_test_data = False
 
@@ -41,7 +45,14 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         include_test_data = params["include_test_data"]
     start_time = time.process_time()
 
-    chatbot_response = invoke_simple_agent_with_retry(response, session_id="test")
+    # chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4()) # TODO: to be replaced by Session ID set by web client
+    # ########### TESTING
+    chatbot_response = {
+        "input": response,
+        "output": "I am a chatbot. I can help you with your queries.",
+        "intermediate_steps": ["Number of messages sent: 0", "Number of remembered messages:0", "Number of total messages in the conversation: 0"]
+    }
+    # ########### TESTING
     end_time = time.process_time()
 
     result._processing_time = end_time - start_time

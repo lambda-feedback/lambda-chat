@@ -1,6 +1,6 @@
-# Base image that bundles AWS Lambda Python 3.8 image with some middleware functions
-# FROM base-eval-tmp
+# Base image that bundles AWS Lambda Python 3.X image with some middleware functions
 FROM rabidsheep55/python-base-eval-layer
+# FROM ghcr.io/lambda-feedback/baseevalutionfunctionlayer:main-3.11
 
 WORKDIR /app
 
