@@ -27,7 +27,7 @@ class TestEvaluationFunction(unittest.TestCase):
     def test_evaluation(self):
         response, answer, params = "Hello, World", "Hello, World", Params()
 
-        result = evaluation_function(response, answer, params).to_dict()
+        result = evaluation_function(response, answer, params)
 
         self.assertEqual(result.get("is_correct"), True)
         self.assertFalse(result.get("feedback", False))

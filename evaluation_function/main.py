@@ -14,8 +14,7 @@ def main():
     server = create_server()
 
     server.eval(evaluation_function)
-    print("Evaluation function loaded")
-    server.preview(preview_function)
+    # server.preview(preview_function)
 
     run(server)
 
