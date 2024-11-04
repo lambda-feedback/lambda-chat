@@ -5,6 +5,7 @@ except ImportError:
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState, StateGraph, START, END
+from langchain_core.runnables.config import RunnableConfig
 
 from typing import Literal
 
@@ -29,11 +30,15 @@ class ChatbotAgent:
         # Define a new graph for the conversation
         self.workflow = StateGraph(State)
         self.workflow_definition()
-        # Finally, we compile it!
         self.app = self.workflow.compile(checkpointer=self.memory)
 
 
-    def call_model(self, state: State) -> str:
+    def call_model(self, state: State, config: RunnableConfig) -> str:
+
+        # Unwrap the config
+        self.session_id = config["configurable"].get("thread_id")
+        self.prompt_prefix = config["configurable"].get("prompt_prefix")
+
         summary = state.get("summary", "")
         if summary:
             system_message = f"Summary of conversation earlier: {summary}"
@@ -156,24 +161,3 @@ if __name__ == "__main__":
         for event in events:
             chatbot_agent.print_update(event)
             # event["messages"][-1].pretty_print()
-
-    # config = {"configurable": {"thread_id": "4"}}
-    # input_message = HumanMessage(content="hi! I'm bob")
-    # input_message.pretty_print()
-    # for event in chatbot_agent.app.stream({"messages": [input_message]}, config, stream_mode="values"):
-    #     print(f"Event: {event}")
-    #     chatbot_agent.pretty_response_value(event)
-    #     # chatbot_agent.print_update(event)
-
-    # input_message = HumanMessage(content="what's my name?")
-    # input_message.pretty_print()
-    # for event in chatbot_agent.app.stream({"messages": [input_message]}, config, stream_mode="updates"):
-    #     chatbot_agent.print_update(event)
-
-    # input_message = HumanMessage(content="i like the celtics!")
-    # input_message.pretty_print()
-    # for event in chatbot_agent.app.stream({"messages": [input_message]}, config, stream_mode="updates"):
-    #     chatbot_agent.print_update(event)
-
-    # values = chatbot_agent.app.get_state(config).values
-    # print(f"Final state: {values}")

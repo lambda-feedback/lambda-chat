@@ -4,10 +4,12 @@ try:
     from .agents.chatbot_summarised_memory_agent import ChatbotAgent
     from .agents.profiling_agent import ProfilingAgent
     from .evaluation_response import Result, Params
+    from .db_analytics.merge_data import get_student_data
 except ImportError:
     from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
     from evaluation_function.agents.profiling_agent import ProfilingAgent
     from evaluation_function.evaluation_response import Result, Params
+    from evaluation_function.db_analytics.merge_data import get_student_data
 import time
 import uuid
 
@@ -45,14 +47,12 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         include_test_data = params["include_test_data"]
     start_time = time.process_time()
 
-    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4()) # TODO: to be replaced by Session ID set by web client
-    # ########### TESTING
-    # chatbot_response = {
-    #     "input": response,
-    #     "output": "I am a chatbot. I can help you with your queries.",
-    #     "intermediate_steps": ["Number of messages sent: 0", "Number of remembered messages:0", "Number of total messages in the conversation: 0"]
-    # }
-    # ########### TESTING
+    ##### External DB: user progress data into an LLM prompt prefix
+    student_id = 'test'  # Replace with the specific student ID
+    response_area_id = 'test'  # Replace with specific question ID #response area
+    student_data_prompt = get_student_data(student_id, response_area_id)
+
+    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4(), prompt_prefix=student_data_prompt) # TODO: to be replaced by Session ID set by web client
     end_time = time.process_time()
 
     result._processing_time = end_time - start_time
@@ -62,12 +62,12 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     return result.to_dict(include_test_data=include_test_data)
 
-def invoke_simple_agent_with_retry(query: str, session_id: str):
+def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = ""):
     """Retry the simple agent if a tool fails to run.
     This can help when there are intermittent connection issues to external APIs.
     """
     print(f'in invoke_simple_agent_with_retry(), query = {query}, thread_id = {session_id}')
-    config = {"configurable": {"thread_id": session_id}}
+    config = {"configurable": {"thread_id": session_id, "prompt_prefix": prompt_prefix}}
     response_events = chatbot_agent.app.invoke({"messages": [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
     # print(f'in invoke_simple_agent_with_retry(), response = {response_events}')
     pretty_printed_response = chatbot_agent.pretty_response_value(response_events) # for last event in the response
@@ -106,19 +106,19 @@ def invoke_profiling_agent_with_retry(session_id: str):
         "intermediate_steps": []
     }
 
-# if __name__ == "__main__":
-#     responses = [
-#         "Hi, in one sentence tell me about London.",
-#         "What can a tourist do there? Give me a list of activities in one sentence.",
-#         "I am new to travelling and am concerned about my visit. Give me the top 5 things I should pack for the trip.",
-#         "I am a foodie. What are the top 5 restaurants in London?",
-#         "Give me a brief summary of what we have discussed so far. I want to remember the key points.",
-#         "I do not understand you point, can you explain it in a different way?",
-#     ]
-#     for response in responses:
-#         llm_response = evaluation_function(response, "", {"include_test_data": True})
-#         print("AI: "+llm_response["feedback"])
-#         print("Summary: ")
-#         print(llm_response["metadata"]["summary"])
-#         print("Processing time: " + str(llm_response["processing_time"]))
-#         print("--------------------")
+if __name__ == "__main__":
+    responses = [
+        "Hi, in one sentence tell me about London.",
+        "What can a tourist do there? Give me a list of activities in one sentence.",
+        "I am new to travelling and am concerned about my visit. Give me the top 5 things I should pack for the trip.",
+        "I am a foodie. What are the top 5 restaurants in London?",
+        "Give me a brief summary of what we have discussed so far. I want to remember the key points.",
+        "I do not understand you point, can you explain it in a different way?",
+    ]
+    for response in responses:
+        llm_response = evaluation_function(response, "", {"include_test_data": True})
+        print("AI: "+llm_response["feedback"])
+        print("Summary: ")
+        print(llm_response["metadata"]["summary"])
+        print("Processing time: " + str(llm_response["processing_time"]))
+        print("--------------------")
