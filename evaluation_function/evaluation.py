@@ -43,15 +43,18 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     result = Result(is_correct=True)
     include_test_data = False
+    conversation_history = []
 
     if "include_test_data" in params:
         include_test_data = params["include_test_data"]
+    if "conversation_history" in params:
+        conversation_history = params["conversation_history"]
     start_time = time.process_time()
 
     ##### External DB: user progress data into an LLM prompt prefix -> use student ID, question ID, response area ID, and other relevant data
     # student_data_prompt = model_student_data(student_id, response_area_id)
 
-    chatbot_response = invoke_agent_no_memory(response, params, session_id=uuid.uuid4()) # TODO: to be replaced by Question ID set by web client
+    chatbot_response = invoke_agent_no_memory(response, conversation_history, session_id=uuid.uuid4()) # TODO: to be replaced by Question ID set by web client
     end_time = time.process_time()
 
     result._processing_time = end_time - start_time
@@ -61,12 +64,11 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     return result.to_dict(include_test_data=include_test_data)
 
-def invoke_agent_no_memory(query: str, params: Params, session_id: str):
+def invoke_agent_no_memory(query: str, conversation_history: list, session_id: str):
     """ Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
     """
     print(f'in invoke_agent_no_memory(), query = {query}, thread_id = {session_id}')
     config = {"configurable": {"thread_id": session_id}}
-    conversation_history = params["conversation_history"]
     response_events = no_memory_agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
     pretty_printed_response = chatbot_agent.pretty_response_value(response_events) # for last event in the response
 
