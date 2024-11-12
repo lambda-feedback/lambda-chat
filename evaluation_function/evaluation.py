@@ -4,12 +4,10 @@ try:
     from .agents.chatbot_summarised_memory_agent import ChatbotAgent
     from .agents.profiling_agent import ProfilingAgent
     from .evaluation_response import Result, Params
-    from .db_analytics.merge_data import get_student_data
 except ImportError:
     from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
     from evaluation_function.agents.profiling_agent import ProfilingAgent
     from evaluation_function.evaluation_response import Result, Params
-    from evaluation_function.db_analytics.merge_data import get_student_data
 import time
 import uuid
 
@@ -47,12 +45,11 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         include_test_data = params["include_test_data"]
     start_time = time.process_time()
 
-    ##### External DB: user progress data into an LLM prompt prefix
-    student_id = 'test'  # Replace with the specific student ID
-    response_area_id = 'test'  # Replace with specific question ID #response area
-    student_data_prompt = get_student_data(student_id, response_area_id)
+    ##### External DB: user progress data into an LLM prompt prefix -> use student ID, question ID, response area ID, and other relevant data
+    # student_data_prompt = model_student_data(student_id, response_area_id)
+    student_data_prompt = ""
 
-    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4(), prompt_prefix=student_data_prompt) # TODO: to be replaced by Session ID set by web client
+    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4(), prompt_prefix=student_data_prompt) # TODO: to be replaced by Question ID set by web client
     end_time = time.process_time()
 
     result._processing_time = end_time - start_time

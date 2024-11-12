@@ -132,3 +132,4 @@ dmypy.json
 .vscode
 
 .DS_Store
+evaluation_function/db_analytics
