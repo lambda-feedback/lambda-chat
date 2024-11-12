@@ -3,16 +3,19 @@ from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, 
 try:
     from .agents.chatbot_summarised_memory_agent import ChatbotAgent
     from .agents.profiling_agent import ProfilingAgent
+    from .agents.no_memory_agent import ChatbotNoMemoryAgent
     from .evaluation_response import Result, Params
 except ImportError:
     from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
     from evaluation_function.agents.profiling_agent import ProfilingAgent
+    from evaluation_function.agents.no_memory_agent import ChatbotNoMemoryAgent
     from evaluation_function.evaluation_response import Result, Params
 import time
 import uuid
 
 chatbot_agent = ChatbotAgent(len_memory=4)
 profiling_agent = ProfilingAgent()
+no_memory_agent = ChatbotNoMemoryAgent()
 
 def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     """
@@ -47,9 +50,8 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     ##### External DB: user progress data into an LLM prompt prefix -> use student ID, question ID, response area ID, and other relevant data
     # student_data_prompt = model_student_data(student_id, response_area_id)
-    student_data_prompt = ""
 
-    chatbot_response = invoke_simple_agent_with_retry(response, session_id=uuid.uuid4(), prompt_prefix=student_data_prompt) # TODO: to be replaced by Question ID set by web client
+    chatbot_response = invoke_agent_no_memory(response, params, session_id=uuid.uuid4()) # TODO: to be replaced by Question ID set by web client
     end_time = time.process_time()
 
     result._processing_time = end_time - start_time
@@ -58,6 +60,21 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     result.add_processing_time(end_time - start_time)
 
     return result.to_dict(include_test_data=include_test_data)
+
+def invoke_agent_no_memory(query: str, params: Params, session_id: str):
+    """ Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
+    """
+    print(f'in invoke_agent_no_memory(), query = {query}, thread_id = {session_id}')
+    config = {"configurable": {"thread_id": session_id}}
+    conversation_history = params["conversation_history"]
+    response_events = no_memory_agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    pretty_printed_response = chatbot_agent.pretty_response_value(response_events) # for last event in the response
+
+    return {
+        "input": query,
+        "output": pretty_printed_response,
+        "intermediate_steps": [conversation_history]
+    }
 
 def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = ""):
     """Retry the simple agent if a tool fails to run.
@@ -103,19 +120,27 @@ def invoke_profiling_agent_with_retry(session_id: str):
         "intermediate_steps": []
     }
 
-if __name__ == "__main__":
-    responses = [
-        "Hi, in one sentence tell me about London.",
-        "What can a tourist do there? Give me a list of activities in one sentence.",
-        "I am new to travelling and am concerned about my visit. Give me the top 5 things I should pack for the trip.",
-        "I am a foodie. What are the top 5 restaurants in London?",
-        "Give me a brief summary of what we have discussed so far. I want to remember the key points.",
-        "I do not understand you point, can you explain it in a different way?",
-    ]
-    for response in responses:
-        llm_response = evaluation_function(response, "", {"include_test_data": True})
-        print("AI: "+llm_response["feedback"])
-        print("Summary: ")
-        print(llm_response["metadata"]["summary"])
-        print("Processing time: " + str(llm_response["processing_time"]))
-        print("--------------------")
+# if __name__ == "__main__":
+#     # responses = [
+#     #     "Hi, in one sentence tell me about London.",
+#     #     "What can a tourist do there? Give me a list of activities in one sentence.",
+#     #     "I am new to travelling and am concerned about my visit. Give me the top 5 things I should pack for the trip.",
+#     #     "I am a foodie. What are the top 5 restaurants in London?",
+#     #     "Give me a brief summary of what we have discussed so far. I want to remember the key points.",
+#     #     "I do not understand you point, can you explain it in a different way?",
+#     # ]
+#     conversation_history = [
+#         {"content": "Hi, in one sentence tell me about London.", "type": "human"},
+#         {"content": "London is the capital of England.", "type": "ai"},
+#         {"content": "What about dogs?", "type": "human"},
+#         {"content": "Dogs are the favorite pets of humans.", "type": "ai"},
+#     ]
+#     responses = ["what about cats?", "Paris?"]
+
+#     for response in responses:
+#         llm_response = evaluation_function(response, "", {"include_test_data": True, "conversation_history": conversation_history})
+#         print("AI: "+llm_response["feedback"])
+#         print("Summary: ")
+#         print(llm_response["metadata"]["summary"])
+#         print("Processing time: " + str(llm_response["processing_time"]))
+#         print("--------------------")
