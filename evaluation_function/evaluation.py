@@ -70,12 +70,14 @@ def invoke_agent_no_memory(query: str, conversation_history: list, session_id: s
     print(f'in invoke_agent_no_memory(), query = {query}, thread_id = {session_id}')
     config = {"configurable": {"thread_id": session_id}}
     response_events = no_memory_agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
-    pretty_printed_response = chatbot_agent.pretty_response_value(response_events) # for last event in the response
+    pretty_printed_response = no_memory_agent.pretty_response_value(response_events) # for last event in the response
+
+    summary = no_memory_agent.get_summary(config)
 
     return {
         "input": query,
         "output": pretty_printed_response,
-        "intermediate_steps": [conversation_history]
+        "intermediate_steps": [conversation_history, "Summary: "+ str(summary)]
     }
 
 def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = ""):
@@ -132,12 +134,20 @@ def invoke_profiling_agent_with_retry(session_id: str):
 #     #     "I do not understand you point, can you explain it in a different way?",
 #     # ]
 #     conversation_history = [
-#         {"content": "Hi, in one sentence tell me about London.", "type": "human"},
-#         {"content": "London is the capital of England.", "type": "ai"},
+#         {"content": "Hi, in one word tell me about London.", "type": "human"},
+#         {"content": "diverse", "type": "ai"},
 #         {"content": "What about dogs?", "type": "human"},
-#         {"content": "Dogs are the favorite pets of humans.", "type": "ai"},
+#         {"content": "loyal", "type": "ai"},
+#         {"content": "cats", "type": "human"},
+#         {"content": "curious", "type": "ai"},
+#         {"content": "Paris?", "type": "human"},
+#         {"content": "romantic", "type": "ai"},
+#         {"content": "What about the weather?", "type": "human"},
+#         {"content": "unpredictable", "type": "ai"},
+#         {"content": "food?", "type": "human"},
+#         {"content": "delicious", "type": "ai"},
 #     ]
-#     responses = ["what about cats?", "Paris?"]
+#     responses = ["what about birds?", "Berlin?"]
 
 #     for response in responses:
 #         llm_response = evaluation_function(response, "", {"include_test_data": True, "conversation_history": conversation_history})

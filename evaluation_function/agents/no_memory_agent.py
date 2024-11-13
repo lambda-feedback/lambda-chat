@@ -19,6 +19,7 @@ class ChatbotNoMemoryAgent:
         self.llm = llm.get_llm()
         summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
+        self.summary = ""
 
         # Define a new graph for the conversation & compile it
         self.workflow = StateGraph(State)
@@ -37,7 +38,10 @@ class ChatbotNoMemoryAgent:
         valid_messages = self.check_for_valid_messages(messages)
         response = self.llm.invoke(valid_messages)
 
-        return {"messages": [response]}
+        # Save summary for fetching outside the class
+        self.summary = summary
+
+        return {"summary": summary, "messages": [response]}
     
     def check_for_valid_messages(self, messages):
         """ Removing the RemoveMessage() from the list of messages """
@@ -90,6 +94,9 @@ class ChatbotNoMemoryAgent:
         self.workflow.add_conditional_edges(source=START, path=self.should_summarize)
         self.workflow.add_edge("summarize_conversation", "call_llm")
         self.workflow.add_edge("call_llm", END)
+
+    def get_summary(self, state: State):
+        return self.summary
     
     def print_update(self, update):
         for k, v in update.items():
@@ -102,41 +109,45 @@ class ChatbotNoMemoryAgent:
         return event["messages"][-1].content
     
 
-if __name__ == "__main__":
-    # TESTING
-    agent = ChatbotNoMemoryAgent()
-    # conversation_history = [
-    #     HumanMessage(content="Hi, in one sentence tell me about London."),
-    #     AIMessage(content="London is the capital of England."),
-    #     HumanMessage(content="What about dogs?"),
-    #     AIMessage(content="Dogs are the favorite pets of humans."),
-    # ]
+# if __name__ == "__main__":
+#     # TESTING
+#     agent = ChatbotNoMemoryAgent()
+#     # conversation_history = [
+#     #     HumanMessage(content="Hi, in one sentence tell me about London."),
+#     #     AIMessage(content="London is the capital of England."),
+#     #     HumanMessage(content="What about dogs?"),
+#     #     AIMessage(content="Dogs are the favorite pets of humans."),
+#     # ]
 
-    conversation_history = [
-        {"content": "Hi, in one sentence tell me about London.", "type": "human"},
-        {"content": "London is the capital of England.", "type": "ai"},
-        {"content": "What about dogs?", "type": "human"},
-        {"content": "Dogs are the favorite pets of humans.", "type": "ai"},
-        {"content": "cats", "type": "human"},
-        {"content": "Cats are the second favorite pets of humans.", "type": "ai"},
-        {"content": "Paris?", "type": "human"},
-        {"content": "Paris is the capital of France.", "type": "ai"},
-    ]
+#     conversation_history = [
+#         {"content": "Hi, in one word tell me about London.", "type": "human"},
+#         {"content": "diverse", "type": "ai"},
+#         {"content": "What about dogs?", "type": "human"},
+#         {"content": "loyal", "type": "ai"},
+#         {"content": "cats", "type": "human"},
+#         {"content": "curious", "type": "ai"},
+#         {"content": "Paris?", "type": "human"},
+#         {"content": "romantic", "type": "ai"},
+#         {"content": "What about the weather?", "type": "human"},
+#         {"content": "unpredictable", "type": "ai"},
+#         {"content": "food?", "type": "human"},
+#         {"content": "delicious", "type": "ai"},
+#     ]
 
-    def stream_graph_updates(user_input: str):
-        for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}):
-            for value in event.values():
-                print("Assistant:", value["messages"][-1].content)
+#     def stream_graph_updates(user_input: str):
+#         for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}):
+#             for value in event.values():
+#                 print("Assistant:", value["messages"][-1].content)
 
 
-    while True:
-        try:
-            user_input = input("User: ")
-            if user_input.lower() in ["quit", "exit", "q"]:
-                print("Goodbye!")
-                break
+#     while True:
+#         try:
+#             user_input = input("User: ")
+#             if user_input.lower() in ["quit", "exit", "q"]:
+#                 print("Goodbye!")
+#                 break
 
-            stream_graph_updates(user_input)
-        except:
-            # fallback if input() is not available
-            break
+#             stream_graph_updates(user_input)
+#         except:
+#             # fallback if input() is not available
+#             break
