@@ -49,13 +49,13 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         include_test_data = params["include_test_data"]
     if "conversation_history" in params:
         conversation_history = params["conversation_history"]
-    start_time = time.process_time()
+    start_time = time.time()
 
     ##### External DB: user progress data into an LLM prompt prefix -> use student ID, question ID, response area ID, and other relevant data
     # student_data_prompt = model_student_data(student_id, response_area_id)
 
     chatbot_response = invoke_agent_no_memory(response, conversation_history, session_id=uuid.uuid4()) # TODO: to be replaced by Question ID set by web client
-    end_time = time.process_time()
+    end_time = time.time()
 
     result._processing_time = end_time - start_time
     result.add_feedback("chatbot_response", chatbot_response["output"])
