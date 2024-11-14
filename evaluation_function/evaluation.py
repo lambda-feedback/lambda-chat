@@ -4,11 +4,13 @@ try:
     from .agents.chatbot_summarised_memory_agent import ChatbotAgent
     from .agents.profiling_agent import ProfilingAgent
     from .agents.no_memory_agent import ChatbotNoMemoryAgent
+    from .agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
     from .evaluation_response import Result, Params
 except ImportError:
     from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
     from evaluation_function.agents.profiling_agent import ProfilingAgent
     from evaluation_function.agents.no_memory_agent import ChatbotNoMemoryAgent
+    from evaluation_function.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
     from evaluation_function.evaluation_response import Result, Params
 import time
 import uuid
@@ -16,6 +18,7 @@ import uuid
 chatbot_agent = ChatbotAgent(len_memory=4)
 profiling_agent = ProfilingAgent()
 no_memory_agent = ChatbotNoMemoryAgent()
+no_summary_no_memory_agent = ChatbotNoSummaryNoMemoryAgent()
 
 def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     """
@@ -63,6 +66,23 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     result.add_processing_time(end_time - start_time)
 
     return result.to_dict(include_test_data=include_test_data)
+
+
+# ######## INVOKE AGENTS ########
+
+def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, session_id: str):
+    """ Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
+    """
+    print(f'in invoke_agent_no_summary_no_memory(), query = {query}, thread_id = {session_id}')
+    config = {"configurable": {"thread_id": session_id}}
+    response_events = no_summary_no_memory_agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    pretty_printed_response = no_summary_no_memory_agent.pretty_response_value(response_events) # for last event in the response
+
+    return {
+        "input": query,
+        "output": pretty_printed_response,
+        "intermediate_steps": []
+    }
 
 def invoke_agent_no_memory(query: str, conversation_history: list, session_id: str):
     """ Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
