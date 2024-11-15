@@ -61,18 +61,29 @@ class ChatbotNoMemoryAgent:
                 valid_messages.append(message)
         return valid_messages
     
-    def summarize_conversation(self, state: State):
+    def summarize_conversation(self, state: State, config: RunnableConfig):
         """Summarize the conversation."""
         summary = state.get("summary", "")
+        previous_summary = config["configurable"].get("summary", "")
+        previous_conversationalStyle = config["configurable"].get("conversational_style", "")
+        if previous_summary:
+            summary = previous_summary
+        
         if summary:
             summary_message = (
                 f"This is summary of the conversation to date: {summary}\n\n"
                 "Update the summary by taking into account the new messages above:"
             )
-            conversationalStyle_message = sum_conv_pref_prompt
         else:
             # summary_message = "Create a summary of the conversation above:"
             summary_message = summary_prompt
+        
+        if previous_conversationalStyle:
+            conversationalStyle_message = (
+                f"This is the conversational style and preferences for this conversation: {previous_conversationalStyle}\n\n"
+                "Update the conversational style by taking into account the new messages above:"
+            )
+        else:
             conversationalStyle_message = sum_conv_pref_prompt
 
         # STEP 1: Summarize the conversation
