@@ -62,7 +62,9 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     result._processing_time = end_time - start_time
     result.add_feedback("chatbot_response", chatbot_response["output"])
-    result.add_metadata("summary", chatbot_response["intermediate_steps"])
+    result.add_metadata("summary", chatbot_response["intermediate_steps"][0])
+    result.add_metadata("conversational_style", chatbot_response["intermediate_steps"][1])
+    result.add_metadata("conversation_history", chatbot_response["intermediate_steps"][2])
     result.add_processing_time(end_time - start_time)
 
     return result.to_dict(include_test_data=include_test_data)
@@ -85,19 +87,21 @@ def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, se
     }
 
 def invoke_agent_no_memory(query: str, conversation_history: list, session_id: str):
-    """ Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
+    """ Call an agent that has no conversation memory and expects to receive all past messages in the params and the latest human request in the query.
+        If conversation history longer than X, the agent will summarize the conversation and will provide a conversational style analysis.
     """
     print(f'in invoke_agent_no_memory(), query = {query}, thread_id = {session_id}')
     config = {"configurable": {"thread_id": session_id}}
     response_events = no_memory_agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
     pretty_printed_response = no_memory_agent.pretty_response_value(response_events) # for last event in the response
 
-    summary = no_memory_agent.get_summary(config)
+    summary = no_memory_agent.get_summary()
+    conversationalStyle = no_memory_agent.get_conversational_style()
 
     return {
         "input": query,
         "output": pretty_printed_response,
-        "intermediate_steps": [conversation_history, "Summary: "+ str(summary)]
+        "intermediate_steps": [str(summary), conversationalStyle, conversation_history]
     }
 
 def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = ""):
@@ -145,14 +149,6 @@ def invoke_profiling_agent_with_retry(session_id: str):
     }
 
 # if __name__ == "__main__":
-#     # responses = [
-#     #     "Hi, in one sentence tell me about London.",
-#     #     "What can a tourist do there? Give me a list of activities in one sentence.",
-#     #     "I am new to travelling and am concerned about my visit. Give me the top 5 things I should pack for the trip.",
-#     #     "I am a foodie. What are the top 5 restaurants in London?",
-#     #     "Give me a brief summary of what we have discussed so far. I want to remember the key points.",
-#     #     "I do not understand you point, can you explain it in a different way?",
-#     # ]
 #     conversation_history = [
 #         {"content": "Hi, in one word tell me about London.", "type": "human"},
 #         {"content": "diverse", "type": "ai"},
@@ -174,5 +170,7 @@ def invoke_profiling_agent_with_retry(session_id: str):
 #         print("AI: "+llm_response["feedback"])
 #         print("Summary: ")
 #         print(llm_response["metadata"]["summary"])
+#         print("Conversational Style: ")
+#         print(llm_response["metadata"]["conversational_style"])
 #         print("Processing time: " + str(llm_response["processing_time"]))
 #         print("--------------------")
