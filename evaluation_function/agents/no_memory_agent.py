@@ -1,11 +1,11 @@
 try:
     from .llm_factory import OpenAILLMs
     from .prompts.sum_conv_pref import \
-        prompt as sum_conv_pref_prompt, summary_prompt
+        conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 except ImportError:
     from evaluation_function.agents.llm_factory import OpenAILLMs
     from evaluation_function.agents.prompts.sum_conv_pref import \
-    prompt as sum_conv_pref_prompt, summary_prompt
+    conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
@@ -80,19 +80,19 @@ class ChatbotNoMemoryAgent:
         
         if previous_conversationalStyle:
             conversationalStyle_message = (
-                f"This is the conversational style and preferences for this conversation: {previous_conversationalStyle}\n\n"
-                "Update the conversational style by taking into account the new messages above:"
+                f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
+                update_conv_pref_prompt
             )
         else:
-            conversationalStyle_message = sum_conv_pref_prompt
+            conversationalStyle_message = conv_pref_prompt
 
         # STEP 1: Summarize the conversation
-        messages = state["messages"] + [SystemMessage(content=summary_message)] 
+        messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
         valid_messages = self.check_for_valid_messages(messages)
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        messages = state["messages"] + [SystemMessage(content=conversationalStyle_message)]
+        messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
         valid_messages = self.check_for_valid_messages(messages)
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
@@ -173,7 +173,7 @@ class ChatbotNoMemoryAgent:
 #         {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
 #         {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
 #         {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
-#         # {"content": "Are there specific applications where DFS is preferred over BFS?", "type": "human"}
+#         {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic.", "type": "human"},
 #     ]
 #     conversation_biology = [
 #         {"content": "Could you explain what dominant and recessive alleles are?", "type": "human"},
@@ -208,9 +208,10 @@ class ChatbotNoMemoryAgent:
 
 #     # SELECT THE CONVERSATION TO USE
 #     conversation_history = conversation_computing
+#     config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
 
 #     def stream_graph_updates(user_input: str):
-#         for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}):
+#         for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}, config):
 #             for value in event.values():
 #                 print("Assistant:", value["messages"][-1].content)
 
