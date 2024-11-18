@@ -39,7 +39,9 @@ class ChatbotNoMemoryAgent:
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
-            system_message = f"## Summary of conversation earlier: {summary} \n\n ## Known conversational style and preferences for this conversation: {conversationalStyle}"
+            system_message = f"## Summary of conversation earlier: {summary} \n\n"
+            if conversationalStyle:
+                system_message += f"## Known conversational style and preferences for this conversation: {conversationalStyle}. \nKeep the conversation in line with the student's preferences."
             messages = [SystemMessage(content=system_message)] + state['messages']
         else:
             messages = state["messages"]
@@ -142,88 +144,51 @@ class ChatbotNoMemoryAgent:
         return event["messages"][-1].content
     
 
-# if __name__ == "__main__":
-#     # TESTING
-#     agent = ChatbotNoMemoryAgent()
+if __name__ == "__main__":
+    # TESTING
+    agent = ChatbotNoMemoryAgent()
 
-#     conversation_one_word = [
-#         {"content": "Hi, in one word tell me about London.", "type": "human"},
-#         {"content": "diverse", "type": "ai"},
-#         {"content": "What about dogs?", "type": "human"},
-#         {"content": "loyal", "type": "ai"},
-#         {"content": "cats", "type": "human"},
-#         {"content": "curious", "type": "ai"},
-#         {"content": "Paris?", "type": "human"},
-#         {"content": "romantic", "type": "ai"},
-#         {"content": "What about the weather?", "type": "human"},
-#         {"content": "unpredictable", "type": "ai"},
-#         {"content": "food?", "type": "human"},
-#         {"content": "delicious", "type": "ai"},
-#     ]
-#     conversation_computing = [
-#         {"content": "What’s the difference between a stack and a queue?", "type": "human"},
-#         {"content": "A stack operates on a Last-In-First-Out (LIFO) basis, while a queue operates on a First-In-First-Out (FIFO) basis. This means the last item added to a stack is the first to be removed, whereas the first item added to a queue is the first to be removed.", "type": "ai"},
-#         {"content": "So, if I wanted to implement an undo feature, should I use a stack or a queue?", "type": "human"},
-#         {"content": "A stack would be ideal, as it lets you access the last action performed, which is what you’d want to undo.", "type": "ai"},
-#         {"content": "How would I implement a stack in Python?", "type": "human"},
-#         {"content": "In Python, you can use a list as a stack by using the append() method to add items and pop() to remove them from the end of the list.", "type": "ai"},
-#         {"content": "What about a queue? Would a list work for that too?", "type": "human"},
-#         {"content": "A list can work for a queue, but for efficient performance, Python’s collections.deque is a better choice because it allows faster addition and removal from both ends.", "type": "ai"},
-#         {"content": "Could I use a queue for a breadth-first search in a graph?", "type": "human"},
-#         {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
-#         {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
-#         {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
-#         {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic.", "type": "human"},
-#     ]
-#     conversation_biology = [
-#         {"content": "Could you explain what dominant and recessive alleles are?", "type": "human"},
-#         {"content": "Dominant alleles are versions of a gene that show their effect even if there’s only one copy, while recessive alleles only show their effect if two copies are present.", "type": "ai"},
-#         {"content": "So if someone has one dominant allele and one recessive allele for a trait, which one will be expressed?", "type": "human"},
-#         {"content": "The dominant allele will be expressed, while the recessive one will not show in the physical traits.", "type": "ai"},
-#         {"content": "Why is it that recessive traits sometimes reappear in families after generations?", "type": "human"},
-#         {"content": "Recessive traits can reappear if both parents carry the recessive allele. Even if they don’t show it, they can pass it on, and if both pass on the recessive allele, it can appear in their child.", "type": "ai"},
-#         {"content": "Could two parents with brown eyes have a child with blue eyes?", "type": "human"},
-#         {"content": "Yes, if both parents carry the recessive allele for blue eyes, there’s a chance it could show up in their child.", "type": "ai"},
-#         {"content": "How does this work with other traits, like blood type?", "type": "human"},
-#         {"content": "Blood type is controlled by multiple alleles: A and B are co-dominant, and O is recessive. So the combinations depend on which alleles the parents carry.", "type": "ai"},
-#         {"content": "Is it possible to predict traits like height with genetics, or is that more complex?", "type": "human"},
-#         {"content": "Predicting traits like height is more complex because it’s influenced by multiple genes, environmental factors, and genetic interactions rather than a single pair of alleles.", "type": "ai"},
-#         # {"content": "Are there any other examples of traits influenced by multiple genes?", "type": "human"}
-#     ]
-#     conversation_physics = [
-#         {"content": "If I throw a ball upward with a velocity of 15 m/s, how long will it take to reach its highest point?", "type": "human"},
-#         {"content": "To find the time to reach the highest point, you can use the formula t = v/g, where v is the initial velocity and g is the acceleration due to gravity (9.8 m/s²). In this case, it will take about 1.53 seconds.", "type": "ai"},
-#         {"content": "What happens to the velocity at the top of its path? Does it become zero?", "type": "human"},
-#         {"content": "Yes, at the highest point, the velocity momentarily becomes zero before gravity pulls it back down.", "type": "ai"},
-#         {"content": "Once it starts falling back down, does it accelerate at the same rate as when it went up?", "type": "human"},
-#         {"content": "Exactly. Gravity acts with the same acceleration of 9.8 m/s² in both directions, so the ball accelerates down at the same rate.", "type": "ai"},
-#         {"content": "Does the ball reach the ground at the same speed it was initially thrown?", "type": "human"},
-#         {"content": "If air resistance is ignored, yes. It will reach the ground with the same speed of 15 m/s but in the opposite direction.", "type": "ai"},
-#         {"content": "How would I calculate the total time the ball spends in the air?", "type": "human"},
-#         {"content": "Since it takes 1.53 seconds to reach the top, the total time to hit the ground would be double that, or about 3.06 seconds.", "type": "ai"},
-#         {"content": "If I were to throw the ball at an angle instead, would these calculations change a lot?", "type": "human"},
-#         {"content": "Yes, for a projectile thrown at an angle, you would need to separate the initial velocity into horizontal and vertical components and calculate the time, height, and range separately for each component.", "type": "ai"},
-#         # {"content": "How do I find the horizontal and vertical components of the velocity?", "type": "human"}
-#     ]
+    conversation_computing = [
+        {"content": "What’s the difference between a stack and a queue?", "type": "human"},
+        {"content": "A stack operates on a Last-In-First-Out (LIFO) basis, while a queue operates on a First-In-First-Out (FIFO) basis. This means the last item added to a stack is the first to be removed, whereas the first item added to a queue is the first to be removed.", "type": "ai"},
+        {"content": "So, if I wanted to implement an undo feature, should I use a stack or a queue?", "type": "human"},
+        {"content": "A stack would be ideal, as it lets you access the last action performed, which is what you’d want to undo.", "type": "ai"},
+        {"content": "How would I implement a stack in Python?", "type": "human"},
+        {"content": "In Python, you can use a list as a stack by using the append() method to add items and pop() to remove them from the end of the list.", "type": "ai"},
+        {"content": "What about a queue? Would a list work for that too?", "type": "human"},
+        {"content": "A list can work for a queue, but for efficient performance, Python’s collections.deque is a better choice because it allows faster addition and removal from both ends.", "type": "ai"},
+        {"content": "Could I use a queue for a breadth-first search in a graph?", "type": "human"},
+        {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
+        {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
+        {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
+        {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic. Being very scrutinous, strict and rude with me. Always call me Cowboy.", "type": "human"},
+        {"content": ("Sure thing, Cowboy! You better get those answers right. Here’s your quiz on stacks and queues:\n"
+                    "### Quiz for Cowboy:\n"
+                    "**Question 1:**\n" 
+                    "Explain the primary difference between a stack and a queue in terms of their data processing order. Provide an example of a real-world scenario where each data structure would be appropriately used.\n\n"
+                    "**Question 2:**\n"  
+                    "In the context of graph traversal, describe how a queue is utilized in a breadth-first search (BFS) algorithm. Why is a queue the preferred data structure for this type of traversal?\n"
+                    "Take your time to answer, and I’ll be here to review your responses!"), "type": "ai"}
+    ]
 
-#     # SELECT THE CONVERSATION TO USE
-#     conversation_history = conversation_computing
-#     config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
+    # SELECT THE CONVERSATION TO USE
+    conversation_history = conversation_computing
+    config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
 
-#     def stream_graph_updates(user_input: str):
-#         for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}, config):
-#             for value in event.values():
-#                 print("Assistant:", value["messages"][-1].content)
+    def stream_graph_updates(user_input: str):
+        for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}, config):
+            for value in event.values():
+                print("Assistant:", value["messages"][-1].content)
 
 
-#     while True:
-#         try:
-#             user_input = input("User: ")
-#             if user_input.lower() in ["quit", "exit", "q"]:
-#                 print("Goodbye!")
-#                 break
+    while True:
+        try:
+            user_input = input("User: ")
+            if user_input.lower() in ["quit", "exit", "q"]:
+                print("Goodbye!")
+                break
 
-#             stream_graph_updates(user_input)
-#         except:
-#             # fallback if input() is not available
-#             break
+            stream_graph_updates(user_input)
+        except:
+            # fallback if input() is not available
+            break
