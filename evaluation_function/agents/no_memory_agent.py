@@ -1,11 +1,11 @@
 try:
     from .llm_factory import OpenAILLMs
     from .prompts.sum_conv_pref import \
-        conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 except ImportError:
     from evaluation_function.agents.llm_factory import OpenAILLMs
     from evaluation_function.agents.prompts.sum_conv_pref import \
-    conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
@@ -35,16 +35,19 @@ class ChatbotNoMemoryAgent:
         self.app = self.workflow.compile()
 
     def call_model(self, state: State) -> str:
-        """Call the LLM model."""
+        """Call the LLM model knowing the role system prompt, the summary and the conversational style."""
+        # TODO: add external student progress from data queries into the role_prompt
+
+        system_message = role_prompt
+
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
-            system_message = f"## Summary of conversation earlier: {summary} \n\n"
-            if conversationalStyle:
-                system_message += f"## Known conversational style and preferences for this conversation: {conversationalStyle}. \nKeep the conversation in line with the student's preferences."
-            messages = [SystemMessage(content=system_message)] + state['messages']
-        else:
-            messages = state["messages"]
+            system_message += f"## Summary of conversation earlier: {summary} \n\n"
+        if conversationalStyle:
+            system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
+
+        messages = [SystemMessage(content=system_message)] + state['messages']
 
         valid_messages = self.check_for_valid_messages(messages)
         response = self.llm.invoke(valid_messages)
@@ -77,7 +80,6 @@ class ChatbotNoMemoryAgent:
                 "Update the summary by taking into account the new messages above:"
             )
         else:
-            # summary_message = "Create a summary of the conversation above:"
             summary_message = summary_prompt
         
         if previous_conversationalStyle:
@@ -144,51 +146,59 @@ class ChatbotNoMemoryAgent:
         return event["messages"][-1].content
     
 
-if __name__ == "__main__":
-    # TESTING
-    agent = ChatbotNoMemoryAgent()
+# if __name__ == "__main__":
+#     # TESTING
+#     agent = ChatbotNoMemoryAgent()
 
-    conversation_computing = [
-        {"content": "What’s the difference between a stack and a queue?", "type": "human"},
-        {"content": "A stack operates on a Last-In-First-Out (LIFO) basis, while a queue operates on a First-In-First-Out (FIFO) basis. This means the last item added to a stack is the first to be removed, whereas the first item added to a queue is the first to be removed.", "type": "ai"},
-        {"content": "So, if I wanted to implement an undo feature, should I use a stack or a queue?", "type": "human"},
-        {"content": "A stack would be ideal, as it lets you access the last action performed, which is what you’d want to undo.", "type": "ai"},
-        {"content": "How would I implement a stack in Python?", "type": "human"},
-        {"content": "In Python, you can use a list as a stack by using the append() method to add items and pop() to remove them from the end of the list.", "type": "ai"},
-        {"content": "What about a queue? Would a list work for that too?", "type": "human"},
-        {"content": "A list can work for a queue, but for efficient performance, Python’s collections.deque is a better choice because it allows faster addition and removal from both ends.", "type": "ai"},
-        {"content": "Could I use a queue for a breadth-first search in a graph?", "type": "human"},
-        {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
-        {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
-        {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
-        {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic. Being very scrutinous, strict and rude with me. Always call me Cowboy.", "type": "human"},
-        {"content": ("Sure thing, Cowboy! You better get those answers right. Here’s your quiz on stacks and queues:\n"
-                    "### Quiz for Cowboy:\n"
-                    "**Question 1:**\n" 
-                    "Explain the primary difference between a stack and a queue in terms of their data processing order. Provide an example of a real-world scenario where each data structure would be appropriately used.\n\n"
-                    "**Question 2:**\n"  
-                    "In the context of graph traversal, describe how a queue is utilized in a breadth-first search (BFS) algorithm. Why is a queue the preferred data structure for this type of traversal?\n"
-                    "Take your time to answer, and I’ll be here to review your responses!"), "type": "ai"}
-    ]
+#     conversation_computing = [
+#         {"content": "What’s the difference between a stack and a queue?", "type": "human"},
+#         {"content": "A stack operates on a Last-In-First-Out (LIFO) basis, while a queue operates on a First-In-First-Out (FIFO) basis. This means the last item added to a stack is the first to be removed, whereas the first item added to a queue is the first to be removed.", "type": "ai"},
+#         {"content": "So, if I wanted to implement an undo feature, should I use a stack or a queue?", "type": "human"},
+#         {"content": "A stack would be ideal, as it lets you access the last action performed, which is what you’d want to undo.", "type": "ai"},
+#         {"content": "How would I implement a stack in Python?", "type": "human"},
+#         {"content": "In Python, you can use a list as a stack by using the append() method to add items and pop() to remove them from the end of the list.", "type": "ai"},
+#         {"content": "What about a queue? Would a list work for that too?", "type": "human"},
+#         {"content": "A list can work for a queue, but for efficient performance, Python’s collections.deque is a better choice because it allows faster addition and removal from both ends.", "type": "ai"},
+#         {"content": "Could I use a queue for a breadth-first search in a graph?", "type": "human"},
+#         {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
+#         {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
+#         {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
+#         {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic. Being very scrutinous, strict and rude with me. Always call me Cowboy.", "type": "human"},
+#         {"content": ("Sure thing, Cowboy! You better get those answers right. Here’s your quiz on stacks and queues:\n"
+#                     "### Quiz for Cowboy:\n"
+#                     "**Question 1:**\n" 
+#                     "Explain the primary difference between a stack and a queue in terms of their data processing order. Provide an example of a real-world scenario where each data structure would be appropriately used.\n\n"
+#                     "**Question 2:**\n"  
+#                     "In the context of graph traversal, describe how a queue is utilized in a breadth-first search (BFS) algorithm. Why is a queue the preferred data structure for this type of traversal?\n"
+#                     "Take your time to answer, and I’ll be here to review your responses!"), "type": "ai"}
+#     ]
 
-    # SELECT THE CONVERSATION TO USE
-    conversation_history = conversation_computing
-    config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
+#     # SELECT THE CONVERSATION TO USE
+#     conversation_history = conversation_computing
+#     config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
 
-    def stream_graph_updates(user_input: str):
-        for event in agent.app.stream({"messages": conversation_history + [("user", user_input)]}, config):
-            for value in event.values():
-                print("Assistant:", value["messages"][-1].content)
+#     def stream_graph_updates(user_input: str, history: list):
+#         for event in agent.app.stream({"messages": history + [("user", user_input)]}, config):
+#             conversation_history.append({
+#                 "content": user_input,
+#                 "type": "human"
+#             })
+#             for value in event.values():
+#                 print("Assistant:", value["messages"][-1].content)
+#                 conversation_history.append({
+#                     "content": value["messages"][-1].content,
+#                     "type": "ai"
+#                 })
 
 
-    while True:
-        try:
-            user_input = input("User: ")
-            if user_input.lower() in ["quit", "exit", "q"]:
-                print("Goodbye!")
-                break
+#     while True:
+#         try:
+#             user_input = input("User: ")
+#             if user_input.lower() in ["quit", "exit", "q"]:
+#                 print("Goodbye!")
+#                 break
 
-            stream_graph_updates(user_input)
-        except:
-            # fallback if input() is not available
-            break
+#             stream_graph_updates(user_input, conversation_history)
+#         except:
+#             # fallback if input() is not available
+#             break
