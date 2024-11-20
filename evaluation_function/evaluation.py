@@ -13,6 +13,7 @@ except ImportError:
     from evaluation_function.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
     from evaluation_function.evaluation_response import Result, Params
 import time
+import uuid
 
 chatbot_agent = ChatbotAgent(len_memory=4)
 profiling_agent = ProfilingAgent()
@@ -48,6 +49,8 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     conversation_history = []
     summary = ""
     conversationalStyle = ""
+    question_response_details = ""
+    conversation_id = uuid.uuid4()
 
     if "include_test_data" in params:
         include_test_data = params["include_test_data"]
