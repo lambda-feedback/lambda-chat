@@ -36,13 +36,16 @@ class ChatbotNoMemoryAgent:
 
     def call_model(self, state: State, config: RunnableConfig) -> str:
         """Call the LLM model knowing the role system prompt, the summary and the conversational style."""
-        # TODO: add external student progress from data queries into the role_prompt
-
+        
+        # Default AI tutor role prompt
         system_message = role_prompt
+
+        # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
         if question_response_details:
             system_message += f"## Known Question Materials: {question_response_details} \n\n"
 
+        # Adding summary and conversational style to the system message
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
@@ -63,6 +66,7 @@ class ChatbotNoMemoryAgent:
     
     def check_for_valid_messages(self, messages):
         """ Removing the RemoveMessage() from the list of messages """
+
         valid_messages = []
         for message in messages:
             if message.type != 'remove':
@@ -71,6 +75,7 @@ class ChatbotNoMemoryAgent:
     
     def summarize_conversation(self, state: State, config: RunnableConfig):
         """Summarize the conversation."""
+
         summary = state.get("summary", "")
         previous_summary = config["configurable"].get("summary", "")
         previous_conversationalStyle = config["configurable"].get("conversational_style", "")
@@ -109,9 +114,11 @@ class ChatbotNoMemoryAgent:
         return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
-        """Return the next node to execute.
+        """
+        Return the next node to execute. 
         If there are more than X messages, then we summarize the conversation.
-        Otherwise, we call the LLM."""
+        Otherwise, we call the LLM.
+        """
 
         messages = state["messages"]
         valid_messages = self.check_for_valid_messages(messages)
