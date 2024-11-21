@@ -1,7 +1,7 @@
 try:
     from .llm_factory import OpenAILLMs
 except ImportError:
-    from evaluation_function.agents.llm_factory import OpenAILLMs
+    from src.agents.llm_factory import OpenAILLMs
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState, StateGraph, START, END

@@ -3,8 +3,8 @@ try:
     from .prompts.sum_conv_pref import \
         role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 except ImportError:
-    from evaluation_function.agents.llm_factory import OpenAILLMs
-    from evaluation_function.agents.prompts.sum_conv_pref import \
+    from src.agents.llm_factory import OpenAILLMs
+    from src.agents.prompts.sum_conv_pref import \
         role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage

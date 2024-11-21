@@ -1,0 +1,90 @@
+name: Dev deployment of chatbot lambda function
+
+on:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  test:
+    name: Dev deployment of chatbot lambda function
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        id: python-setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached venv
+        id: dependencies-cache
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.python-setup.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.dependencies-cache.outputs.cache-hit != 'true'
+        run: |
+          pip install --upgrade pip
+          pip install -r requirement.txt
+
+      - name: Run tests
+        if: always()
+        run: |
+          source .venv/bin/activate
+          pytest --junit-xml=./reports/pytest.xml --tb=auto -v
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ./reports/pytest.xml
+          if-no-files-found: warn
+
+  deploy:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Created the Secrets Under the Repo only with These Variables
+          aws-access-key-id: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_ID }}
+          aws-secret-access-key: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_SECRET }}
+          aws-region: eu-west-2
+
+      - name: Login to Amazon ECR
+        id: login-pf-aws-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push the tagged docker image to Amazon ECR
+        id: build-custom-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
+          ECR_REPOSITORY: lambda-feedback-dev-chat
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Update aws custom lambda function code
+        env:
+          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
+          ECR_REPOSITORY: lambda-feedback-dev-chat
+          IMAGE_TAG: latest
+        run: |
+          aws lambda update-function-code \
+              --function-name lambda-feedback-dev-chat \
+              --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

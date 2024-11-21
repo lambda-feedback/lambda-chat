@@ -5,13 +5,13 @@ try:
     from .agents.profiling_agent import ProfilingAgent
     from .agents.no_memory_agent import ChatbotNoMemoryAgent
     from .agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
-    from .evaluation_response import Result, Params
+    from .module_response import Result, Params
 except ImportError:
-    from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
-    from evaluation_function.agents.profiling_agent import ProfilingAgent
-    from evaluation_function.agents.no_memory_agent import ChatbotNoMemoryAgent
-    from evaluation_function.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
-    from evaluation_function.evaluation_response import Result, Params
+    from src.agents.chatbot_summarised_memory_agent import ChatbotAgent
+    from src.agents.profiling_agent import ProfilingAgent
+    from src.agents.no_memory_agent import ChatbotNoMemoryAgent
+    from src.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
+    from src.module_response import Result, Params
 import time
 import uuid
 
@@ -20,11 +20,11 @@ profiling_agent = ProfilingAgent()
 no_memory_agent = ChatbotNoMemoryAgent()
 no_summary_no_memory_agent = ChatbotNoSummaryNoMemoryAgent()
 
-def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
+def chat_module(response: Any, answer: Any, params: Params) -> Result:
     """
     Function used to evaluate a student response.
     ---
-    The handler function passes three arguments to evaluation_function():
+    The handler function passes three arguments to module():
 
     - `response` which are the answers provided by the student.
     - `answer` which are the correct answers to compare against.
@@ -40,7 +40,7 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     The way you wish to structure you code (all in this function, or
     split into many) is entirely up to you. All that matters are the
-    return types and that evaluation_function() is the main function used
+    return types and that module() is the main function used
     to output the evaluation response.
     """
 
@@ -187,7 +187,7 @@ def invoke_profiling_agent_with_retry(session_id: str):
 #     responses = ["what about birds?", "Berlin?"]
 
 #     for response in responses:
-#         llm_response = evaluation_function(response, "", {"include_test_data": True, "conversation_history": conversation_history})
+#         llm_response = chat_module(response, "", {"include_test_data": True, "conversation_history": conversation_history})
 #         print("AI: "+llm_response["feedback"])
 #         print("Summary: ")
 #         print(llm_response["metadata"]["summary"])

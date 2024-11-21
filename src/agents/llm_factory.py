@@ -1,5 +1,4 @@
 import os
-import getpass
 
 from langchain_openai import AzureChatOpenAI
 from langchain_openai import AzureOpenAIEmbeddings
@@ -53,9 +52,6 @@ class OllamaLLMs:
     
 class OpenAILLMs:
     def __init__(self):
-        if "OPENAI_API_KEY" not in os.environ:
-            os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API key: ")
-
         self._openai_llm = ChatOpenAI(
             model=os.environ['OPENAI_MODEL'],
             temperature=0,

@@ -1,9 +1,9 @@
 import unittest
 
 try:
-    from .evaluation import Params, evaluation_function
+    from .module import Params, chat_module
 except ImportError:
-    from evaluation_function.evaluation import Params, evaluation_function
+    from module import Params, chat_module
 
 class TestEvaluationFunction(unittest.TestCase):
     """
@@ -20,13 +20,13 @@ class TestEvaluationFunction(unittest.TestCase):
     Read the docs on how to use unittest here:
     https://docs.python.org/3/library/unittest.html
 
-    Use evaluation_function() to check your algorithm works
+    Use module() to check your algorithm works
     as it should.
     """
 
     def test_evaluation(self):
         response, answer, params = "Hello, World", "Hello, World", Params()
 
-        result = evaluation_function(response, answer, params)
+        result = chat_module(response, answer, params)
 
         self.assertEqual(result.get("is_correct"), True)
