@@ -6,7 +6,7 @@ on:
 
 jobs:
   staging_job:
-    name: Staging deployment of Chatbot lambda function
+    name: Staging deployment of Chatbot Module to lambda function
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -62,14 +62,14 @@ jobs:
           timeout-minutes: 10
           secret: ${{ steps.generate_token.outputs.token }}
           issue-title: Approve Production Deployment
-          issue-body: Approve production deployment for the Chatbot
+          issue-body: Approve production deployment for the Chatbot Module
           exclude-workflow-initiator-as-approver: false
           additional-approved-words: fine, go
           additional-denied-words: ""
 
   prod_job:
     needs: approval_job
-    name: Prod deployment of Chatbot lambda function
+    name: Prod deployment of Chatbot Module to lambda function
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

@@ -5,7 +5,7 @@ try:
 except ImportError:
     from module import Params, chat_module
 
-class TestEvaluationFunction(unittest.TestCase):
+class TestChatModuleFunction(unittest.TestCase):
     """
     TestCase Class used to test the algorithm.
     ---
@@ -24,7 +24,7 @@ class TestEvaluationFunction(unittest.TestCase):
     as it should.
     """
 
-    def test_evaluation(self):
+    def test_module_default_true(self):
         response, answer, params = "Hello, World", "Hello, World", Params()
 
         result = chat_module(response, answer, params)
