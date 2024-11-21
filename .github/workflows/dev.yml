@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ steps.python-setup.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ steps.python-setup.outputs.python-version }}
 
       - name: Install dependencies
         if: steps.dependencies-cache.outputs.cache-hit != 'true'
@@ -51,6 +51,20 @@ jobs:
           name: test-results
           path: ./reports/pytest.xml
           if-no-files-found: warn
+
+  build-test:
+    name: Build and test the Docker image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build -t lambda-feedback-dev-chat .
+
+      - name: Run the Docker container
+        run: docker run -d -p 9000:8080 lambda-feedback-dev-chat
 
   deploy:
     name: Deploy to AWS Lambda
@@ -84,7 +98,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
           ECR_REPOSITORY: lambda-feedback-dev-chat
           IMAGE_TAG: latest
+          FUNCTION_NAME: lambda-feedback-dev-chat
         run: |
           aws lambda update-function-code \
-              --function-name lambda-feedback-dev-chat \
+              --function-name $FUNCTION_NAME \
               --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
