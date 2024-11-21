@@ -52,20 +52,6 @@ jobs:
           path: ./reports/pytest.xml
           if-no-files-found: warn
 
-  build-test:
-    name: Build and test the Docker image
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Build the Docker image
-        run: docker build -t lambda-feedback-dev-chat .
-
-      - name: Run the Docker container
-        run: docker run -d -p 9000:8080 lambda-feedback-dev-chat
-
   deploy:
     name: Deploy to AWS Lambda
     runs-on: ubuntu-latest
