@@ -50,7 +50,6 @@ def chat_module(response: Any, answer: Any, params: Params) -> Result:
     summary = ""
     conversationalStyle = ""
     question_response_details = ""
-    conversation_id = uuid.uuid4()
 
     if "include_test_data" in params:
         include_test_data = params["include_test_data"]
@@ -64,6 +63,9 @@ def chat_module(response: Any, answer: Any, params: Params) -> Result:
         question_response_details = params["question_response_details"]
     if "conversation_id" in params:
         conversation_id = params["conversation_id"]
+    else:
+        return {"metadata": {"error": "Internal Error: conversation id is required"}}
+    
     start_time = time.time()
 
     chatbot_response = invoke_agent_no_memory(query=response, \

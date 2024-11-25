@@ -11,6 +11,22 @@ def handler(event, context):
     # Log the input event
     print("Received event:", json.dumps(event, indent=2))
 
+    if "answer" not in event:
+        return {
+            "statusCode": 400,
+            "body": "Missing 'answer' key in event"
+        }
+    if "response" not in event:
+        return {
+            "statusCode": 400,
+            "body": "Missing 'response' key in event"
+        }
+    if "params" not in event:
+        return {
+            "statusCode": 400,
+            "body": "Missing 'params' key in event"
+        }
+    
     answer = event.get("answer", None)
     response = event.get("response", None)
     params = event.get("params", None)
