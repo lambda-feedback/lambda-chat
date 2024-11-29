@@ -11,27 +11,27 @@ def handler(event, context):
     # Log the input event
     print("Received event:", json.dumps(event, indent=2))
 
-    if "answer" not in event:
+    if "message" not in event:
         return {
             "statusCode": 400,
-            "body": "Missing 'answer' key in event"
-        }
-    if "response" not in event:
-        return {
-            "statusCode": 400,
-            "body": "Missing 'response' key in event"
+            "body": "Missing 'message' key in event. Please confirm the key in the json body."
         }
     if "params" not in event:
         return {
             "statusCode": 400,
-            "body": "Missing 'params' key in event"
+            "body": "Missing 'params' key in event. Please confirm the key in the json body."
         }
     
-    answer = event.get("answer", None)
-    response = event.get("response", None)
+    message = event.get("message", None)
     params = event.get("params", None)
 
-    chatbot_response = chat_module(response, answer, params)
+    try:
+        chatbot_response = chat_module(message, params)
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": f"An error occurred within the chat_module(): {str(e)}"
+        }
 
     # Create a response
     response = {

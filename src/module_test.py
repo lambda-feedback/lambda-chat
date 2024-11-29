@@ -25,17 +25,9 @@ class TestChatModuleFunction(unittest.TestCase):
     """
     # TODO: update the test cases
 
-    def test_module_default_true(self):
-        response, answer, params = "Hello, World", "Hello, World", Params(conversation_id="1234Test")
-
-        result = chat_module(response, answer, params)
-
-        self.assertEqual(result.get("is_correct"), True)
-
     def test_missing_parameters(self):
         # Checking state for missing parameters
-        response, answer, params = "Hello, World", "Hello, World", \
-            Params()
+        response, params = "Hello, World", Params()
         expected_params = Params(include_test_data=True, conversation_history=[], \
                                     summary="", conversational_style="", \
                                     question_response_details="", conversation_id="1234Test")
@@ -46,38 +38,40 @@ class TestChatModuleFunction(unittest.TestCase):
             if p not in ["include_test_data", "conversation_id"]:
                 params.pop(p)
 
-                result = chat_module(response, answer, params)
+                result = chat_module(response, params)
 
-                self.assertIsNotNone(result.get("metadata"))
-                self.assertEqual("error" in result.get("metadata"), False)
+                self.assertIsNotNone(result)
+                self.assertEqual("error" in result, False)
             elif p == "include_test_data":
                 params.pop(p)
 
-                result = chat_module(response, answer, params)
+                result = chat_module(response, params)
 
-                self.assertIsNone(result.get("metadata"))
+                # check if result has nothing except for the chatbot_response
+                self.assertIsNotNone(result.get("chatbot_response"))
+                self.assertEqual(len(result), 1)
             elif p == "conversation_id":
                 params.pop(p)
+                
+                with self.assertRaises(Exception) as cm:
+                    chat_module(response, params)
 
-                result = chat_module(response, answer, params)
-
-                self.assertEqual("error" in result.get("metadata"), True)
+                self.assertTrue("Internal Error" in str(cm.exception))
+                self.assertTrue("conversation id" in str(cm.exception))
 
     def test_agent_output(self):
         # Checking the output of the agents
-        response, answer, params = "Hello, World", "Hello, World", \
-            Params(conversation_id="1234Test")
+        response, params = "Hello, World", Params(conversation_id="1234Test")
 
-        result = chat_module(response, answer, params)
+        result = chat_module(response, params)
 
-        self.assertIsNotNone(result.get("feedback"))
+        self.assertIsNotNone(result.get("chatbot_response"))
     
     def test_processing_time_calc(self):
         # Checking the processing time calculation
-        response, answer, params = "Hello, World", "Hello, World", \
-            Params(include_test_data=True, conversation_id="1234Test")
+        response, params = "Hello, World", Params(include_test_data=True, conversation_id="1234Test")
 
-        result = chat_module(response, answer, params)
+        result = chat_module(response, params)
 
         self.assertIsNotNone(result.get("processing_time"))
         self.assertGreaterEqual(result.get("processing_time"), 0)

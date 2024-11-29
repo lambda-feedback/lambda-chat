@@ -26,13 +26,12 @@ class TestChatIndexFunction(unittest.TestCase):
     # TODO: update the test cases
 
     def test_missing_argument(self):
-        arguments = ["answer", "response", "params"]
+        arguments = ["message", "params"]
 
         for arg in arguments:
             event = {
-                "answer": "Hello, World",
-                "response": "Hello, World",
-                "params": {}
+                "message": "Hello, World",
+                "params": {"conversation_id": "1234Test"}
             }
             event.pop(arg)
 
@@ -42,9 +41,8 @@ class TestChatIndexFunction(unittest.TestCase):
     
     def test_correct_arguments(self):
         event = {
-            "answer": "Hello, World",
-            "response": "Hello, World",
-            "params": {}
+            "message": "Hello, World",
+            "params": {"conversation_id": "1234Test"}
         }
 
         result = handler(event, None)
@@ -53,9 +51,8 @@ class TestChatIndexFunction(unittest.TestCase):
 
     def test_correct_response(self):
         event = {
-            "answer": "Hello, World",
-            "response": "Hello, World",
-            "params": {}
+            "message": "Hello, World",
+            "params": {"conversation_id": "1234Test"}
         }
 
         result = handler(event, None)
