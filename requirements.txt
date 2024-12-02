@@ -9,3 +9,5 @@ langdetect
 langgraph
 langsmith
 lf_toolkit[ipc] @ git+https://github.com/lambda-feedback/toolkit-python.git@main
+
+pytest
