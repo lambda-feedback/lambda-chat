@@ -1,40 +1,25 @@
-FROM ghcr.io/lambda-feedback/evaluation-function-base/python:3.11 AS builder
+ARG PYTHON_VERSION=3.11
 
-RUN pip install poetry==1.8.3
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+# Set working directory
+WORKDIR ${LAMBDA_TASK_ROOT}
 
-COPY pyproject.toml poetry.lock ./
+RUN pip install --upgrade pip && yum install -y git
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR \
-    poetry install --without dev --no-root
-
-FROM ghcr.io/lambda-feedback/evaluation-function-base/python:3.11
-
-ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH"
-
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+# Install dependencies into the virtual environment
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Precompile python files for faster startup
 RUN python -m compileall -q .
 
-# Copy the evaluation function to the app directory
-COPY evaluation_function ./evaluation_function
+# Copy the function code
+COPY src ./src
 
-# TESTING
-# CMD ["tail", "-f", "/dev/null"]
+COPY index.py .
 
-# Command to start the evaluation function with
-ENV FUNCTION_COMMAND="python"
+COPY index_test.py .
 
-# Args to start the evaluation function with
-ENV FUNCTION_ARGS="-m,evaluation_function.main"
-
-# The transport to use for the RPC server
-ENV FUNCTION_RPC_TRANSPORT="ipc"
-
-ENV LOG_LEVEL="debug"
+# Set the Lambda function handler
+CMD ["index.handler"]

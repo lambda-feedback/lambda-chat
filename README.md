@@ -1,10 +1,10 @@
 # Python Evaluation Function
 
-This repository contains the code needed to run a personalised chatbot under an evaluation function written in Python.
+This repository contains the code needed to run a modular chat functionality that provides multiple chatbot API endpoints [written in Python].
 
 ## Quickstart
 
-This chapter helps you to quickly set up a new Python evaluation function using this template repository.
+This chapter helps you to quickly set up a new Python chat module function using this repository.
 
 > [!NOTE]
 > To develop this function further, you will require the following environment variables in your `.env` file:
@@ -54,62 +54,29 @@ Clone the new repository to your local machine using the following command:
 git clone <repository-url>
 ```
 
-#### 3. Configure the evaluation function
+#### 3. Develop the chat function
 
-When deploying to Lambda Feedback, set the evaluation function name in the `config.json` file. Read the [Deploy to Lambda Feedback](#deploy-to-lambda-feedback) section for more information.
+You're ready to start developing your chat function. Head over to the [Development](#development) section to learn more.
 
-#### 4. Develop the evaluation function
+#### 4. Update the README
 
-You're ready to start developing your evaluation function. Head over to the [Development](#development) section to learn more.
+In the `README.md` file, change the title and description so it fits the purpose of your chat function.
 
-#### 5. Update the README
+Also, don't forget to update or delete the Quickstart chapter from the `README.md` file after you've completed these steps.
 
-In the `README.md` file, change the title and description so it fits the purpose of your evaluation function.
+## Run the Script
 
-Also, don't forget to delete the Quickstart chapter from the `README.md` file after you've completed these steps.
-
-## Usage
-
-You can run the evaluation function either using [the pre-built Docker image](#run-the-docker-image) or build and run [the binary executable](#build-and-run-the-binary).
-
-### Run the Docker Image
-
-The pre-built Docker image comes with [Shimmy](https://github.com/lambda-feedback/shimmy) installed.
-
-> [!TIP]
-> Shimmy is a small application that listens for incoming HTTP requests, validates the incoming data and forwards it to the underlying evaluation function. Learn more about Shimmy in the [Documentation](https://github.com/lambda-feedback/shimmy).
-
-The pre-built Docker image is available on the GitHub Container Registry. You can run the image using the following command:
+You can run the Python function itself. Make sure to have a main function in either `src/module.py` or `index.py`.
 
 ```bash
-docker run -p 8080:8080 ghcr.io/lambda-feedback/evaluation-function-boilerplate-python:latest
-```
-
-### Run the Script
-
-You can choose between running the Python evaluation function itself, ore using Shimmy to run the function.
-
-**Raw Mode**
-
-Use the following command to run the evaluation function directly:
-
-```bash
-python -m evaluation_function.main
-```
-
-This will run the evaluation function using the input data from `request.json` and write the output to `response.json`.
-
-**Shimmy**
-
-To have a more user-friendly experience, you can use [Shimmy](https://github.com/lambda-feedback/shimmy) to run the evaluation function.
-
-To run the evaluation function using Shimmy, use the following command:
-
-```bash
-shimmy -c "python" -a "-m" -a "evaluation_function.main" -i ipc
+python src/module.py
 ```
 
 ## Development
+
+You can create your own invokation to your own agents hosted anywhere. You can add the new invokation in the `module.py` file. Then you can create your own agent script in the `src/agents` folder.
+
+You agent can be based on an LLM hosted anywhere, you have available currenlty OpenAI, AzureOpenAI, and Ollama models but you can introduce your own API call in the `src/agents/llm_factory.py`.
 
 ### Prerequisites
 
@@ -120,110 +87,87 @@ shimmy -c "python" -a "-m" -a "evaluation_function.main" -i ipc
 
 ```bash
 .github/workflows/
-    build.yml                           # builds the public evaluation function image
-    deploy.yml                          # deploys the evaluation function to Lambda Feedback
+    dev.yml                           # deploys the DEV function to Lambda Feedback
+    main.yml                          # deploys the STAGING function to Lambda Feedback
+    test-report.yml                   # gathers Pytest Report of function tests
 
-evaluation_function/main.py             # evaluation function entrypoint
-evaluation_function/evaluation.py       # evaluation function implementation
-evaluation_function/evaluation_test.py  # evaluation function tests
-evaluation_function/preview.py          # evaluation function preview
-evaluation_function/preview_test.py     # evaluation function preview tests
-
-config.json                             # evaluation function deployment configuration file
+src/module.py       # chat_module function implementation
+src/module_test.py  # chat_module function tests
 ```
-
-### Development Workflow
-
-In its most basic form, the development workflow consists of writing the evaluation function in the `evaluation_function.wl` file and testing it locally. As long as the evaluation function adheres to the Evaluation Function API, a development workflow which incorporates using Shimmy is not necessary.
-
-Testing the evaluation function can be done by running the `dev.py` script using the Python interpreter like so:
-
-```bash
-python -m evaluation_function.dev <response> <answer>
-```
-
-> [!NOTE]
-> Specify the `response` and `answer` as command-line arguments.
 
 ### Building the Docker Image
 
 To build the Docker image, run the following command:
 
 ```bash
-docker build -t my-python-evaluation-function .
+docker build -t llm_chat .
 ```
 
 ### Running the Docker Image
 
 To run the Docker image, use the following command:
 
+#### Without .env file:
+
 ```bash
-docker run -it --rm -p 8080:8080 my-python-evaluation-function
+docker run -e OPENAI_API_KEY={your key} -e OPENAI_MODEL={your LLM chosen model name} -p 8080:8080 llm_chat
 ```
 
-This will start the evaluation function and expose it on port `8080`.
+#### With container name (for interaction, e.g. copying file from inside the docker container):
 
-## Deployment
+```bash
+docker run --env-file .env -it --name my-lambda-container -p 8080:8080 llm_chat
+```
 
-This section guides you through the deployment process of the evaluation function. If you want to deploy the evaluation function to Lambda Feedback, follow the steps in the [Lambda Feedback](#deploy-to-lambda-feedback) section. Otherwise, you can deploy the evaluation function to other platforms using the [Other Platforms](#deploy-to-other-platforms) section.
+This will start the evaluation function and expose it on port `8080` and it will be open to be curl:
 
-### Deploy to Lambda Feedback
+```bash
+curl --location 'http://localhost:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data '{"message":"hi","params":{"conversation_id":"12345Test"}}'
+```
 
-Deploying the evaluation function to Lambda Feedback is simple and straightforward, as long as the repository is within the [Lambda Feedback organization](https://github.com/lambda-feedback).
+### Call Docker Container From Postman
 
-After configuring the repository, a [GitHub Actions workflow](.github/workflows/deploy.yml) will automatically build and deploy the evaluation function to Lambda Feedback as soon as changes are pushed to the main branch of the repository.
+POST URL:
 
-**Configuration**
+```bash
+http://localhost:8080/2015-03-31/functions/function/invocations
+```
 
-The deployment configuration is stored in the `config.json` file. Choose a unique name for the evaluation function and set the `EvaluationFunctionName` field in [`config.json`](config.json).
+Body:
 
-> [!IMPORTANT]
-> The evaluation function name must be unique within the Lambda Feedback organization, and must be in `lowerCamelCase`. You can find a example configuration below:
-
-```json
+```JSON
 {
-  "EvaluationFunctionName": "compareStringsWithPython"
+    "message":"hi",
+    "params":{
+        "conversation_id":"12345Test"
+    }
 }
 ```
 
-### Deploy to other Platforms
-
-If you want to deploy the evaluation function to other platforms, you can use the Docker image to deploy the evaluation function.
-
-Please refer to the deployment documentation of the platform you want to deploy the evaluation function to.
-
-If you need help with the deployment, feel free to reach out to the Lambda Feedback team by creating an issue in the template repository.
-
-## FAQ
-
-### Pull Changes from the Template Repository
-
-If you want to pull changes from the template repository to your repository, follow these steps:
-
-1. Add the template repository as a remote:
-
-```bash
-git remote add template https://github.com/lambda-feedback/evaluation-function-boilerplate-python.git
+Body with optional Params:
+```JSON
+{
+    "message":"hi",
+    "params":{
+        "conversation_id":"12345Test",
+        "conversation_history":[" "],
+        "summary":" ",
+        "conversational_style":" ",
+        "question_response_details": "",
+        "include_test_data": true
+    }
+}
 ```
 
-2. Fetch changes from all remotes:
+### Deploy to Lambda Feedback
 
-```bash
-git fetch --all
-```
+Deploying the chat function to Lambda Feedback is simple and straightforward, as long as the repository is within the [Lambda Feedback organization](https://github.com/lambda-feedback).
 
-3. Merge changes from the template repository:
-
-```bash
-git merge template/main --allow-unrelated-histories
-```
-
-> [!WARNING]
-> Make sure to resolve any conflicts and keep the changes you want to keep.
+After configuring the repository, a [GitHub Actions workflow](.github/workflows/main.yml) will automatically build and deploy the evaluation function to Lambda Feedback as soon as changes are pushed to the main branch of the repository. For development, the [GitHub Actions Dev workflow](.github/workflows/dev.yml) also deploys a dev version of the function onto AWS.
 
 ## Troubleshooting
 
-### Containerized Evaluation Function Fails to Start
+### Containerized Function Fails to Start
 
 If your evaluation function is working fine when run locally, but not when containerized, there is much more to consider. Here are some common issues and solution approaches:
 
@@ -231,29 +175,7 @@ If your evaluation function is working fine when run locally, but not when conta
 
 Make sure that all run-time dependencies are installed in the Docker image.
 
-- Python packages: Make sure to add the dependency to the `pyproject.toml` file, and run `poetry install` in the Dockerfile.
+- Python packages: Make sure to add the dependency to the `requirements.txt` or `pyproject.toml` file, and run `pip install -r requirements.txt` or `poetry install` in the Dockerfile.
 - System packages: If you need to install system packages, add the installation command to the Dockerfile.
 - ML models: If your evaluation function depends on ML models, make sure to include them in the Docker image.
 - Data files: If your evaluation function depends on data files, make sure to include them in the Docker image.
-
-**Architecture**
-
-Some package may not be compatible with the architecture of the Docker image. Make sure to use the correct platform when building and running the Docker image.
-
-E.g. to build a Docker image for the `linux/x86_64` platform, use the following command:
-
-```bash
-docker build --platform=linux/x86_64 .
-```
-
-**Verify Standalone Execution**
-
-If requests are timing out, it might be due to the evaluation function not being able to run. Make sure that the evaluation function can be run as a standalone script. This will help you to identify issues that are specific to the containerized environment.
-
-To run just the evaluation function as a standalone script, without using Shimmy, use the following command:
-
-```bash
-docker run -it --rm my-python-evaluation-function python -m evaluation_function.main
-```
-
-If the command starts without any errors, the evaluation function is working correctly. If not, you will see the error message in the console.

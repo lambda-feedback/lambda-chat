@@ -5,31 +5,29 @@ try:
     from .agents.profiling_agent import ProfilingAgent
     from .agents.no_memory_agent import ChatbotNoMemoryAgent
     from .agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
-    from .evaluation_response import Result, Params
+    from .module_response import Result, Params
 except ImportError:
-    from evaluation_function.agents.chatbot_summarised_memory_agent import ChatbotAgent
-    from evaluation_function.agents.profiling_agent import ProfilingAgent
-    from evaluation_function.agents.no_memory_agent import ChatbotNoMemoryAgent
-    from evaluation_function.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
-    from evaluation_function.evaluation_response import Result, Params
+    from src.agents.chatbot_summarised_memory_agent import ChatbotAgent
+    from src.agents.profiling_agent import ProfilingAgent
+    from src.agents.no_memory_agent import ChatbotNoMemoryAgent
+    from src.agents.no_summary_no_memory_agent import ChatbotNoSummaryNoMemoryAgent
+    from src.module_response import Result, Params
 import time
-import uuid
 
 chatbot_agent = ChatbotAgent(len_memory=4)
 profiling_agent = ProfilingAgent()
 no_memory_agent = ChatbotNoMemoryAgent()
 no_summary_no_memory_agent = ChatbotNoSummaryNoMemoryAgent()
 
-def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
+def chat_module(message: Any, params: Params) -> Result:
     """
-    Function used to evaluate a student response.
+    Function used by student to converse with a chatbot.
     ---
-    The handler function passes three arguments to evaluation_function():
+    The handler function passes three arguments to module():
 
-    - `response` which are the answers provided by the student.
-    - `answer` which are the correct answers to compare against.
+    - `message` which is the message sent by the student.
     - `params` which are any extra parameters that may be useful,
-        e.g., error tolerances.
+        e.g., conversation history and summary, conversational style of user, conversation id.
 
     The output of this function is what is returned as the API response
     and therefore must be JSON-encodable. It must also conform to the
@@ -40,17 +38,16 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
 
     The way you wish to structure you code (all in this function, or
     split into many) is entirely up to you. All that matters are the
-    return types and that evaluation_function() is the main function used
-    to output the evaluation response.
+    return types and that module() is the main function used
+    to output the Chatbot response.
     """
 
-    result = Result(is_correct=True)
+    result = Result()
     include_test_data = False
     conversation_history = []
     summary = ""
     conversationalStyle = ""
     question_response_details = ""
-    conversation_id = uuid.uuid4()
 
     if "include_test_data" in params:
         include_test_data = params["include_test_data"]
@@ -64,9 +61,12 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
         question_response_details = params["question_response_details"]
     if "conversation_id" in params:
         conversation_id = params["conversation_id"]
+    else:
+        raise Exception("Internal Error: The conversation id is required in the parameters of the chat module.")
+    
     start_time = time.time()
 
-    chatbot_response = invoke_agent_no_memory(query=response, \
+    chatbot_response = invoke_agent_no_memory(query=message, \
                                                 conversation_history=conversation_history, \
                                                 summary=summary, \
                                                 conversationalStyle=conversationalStyle, \
@@ -75,7 +75,7 @@ def evaluation_function(response: Any, answer: Any, params: Params) -> Result:
     end_time = time.time()
 
     result._processing_time = end_time - start_time
-    result.add_feedback("chatbot_response", chatbot_response["output"])
+    result.add_response("chatbot_response", chatbot_response["output"])
     result.add_metadata("summary", chatbot_response["intermediate_steps"][0])
     result.add_metadata("conversational_style", chatbot_response["intermediate_steps"][1])
     result.add_metadata("conversation_history", chatbot_response["intermediate_steps"][2])
@@ -186,12 +186,17 @@ def invoke_profiling_agent_with_retry(session_id: str):
 #     ]
 #     responses = ["what about birds?", "Berlin?"]
 
-#     for response in responses:
-#         llm_response = evaluation_function(response, "", {"include_test_data": True, "conversation_history": conversation_history})
-#         print("AI: "+llm_response["feedback"])
-#         print("Summary: ")
-#         print(llm_response["metadata"]["summary"])
-#         print("Conversational Style: ")
-#         print(llm_response["metadata"]["conversational_style"])
-#         print("Processing time: " + str(llm_response["processing_time"]))
-#         print("--------------------")
+#     for message in responses:
+#         try:
+#             llm_response = chat_module(message, {"include_test_data": True, "conversation_history": conversation_history, "conversation_id": "test1234"})
+        
+#             print(llm_response)
+#             print("AI: "+llm_response["chatbot_response"])
+#             print("Summary: ")
+#             print(llm_response["metadata"]["summary"])
+#             print("Conversational Style: ")
+#             print(llm_response["metadata"]["conversational_style"])
+#             print("Processing time: " + str(llm_response["processing_time"]))
+#             print("--------------------")
+#         except Exception as e:
+#             print("An error occurred within the chat_module(): " + str(e))
