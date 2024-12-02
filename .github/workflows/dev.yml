@@ -32,6 +32,11 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.python-setup.outputs.python-version }}
 
+      - name: Create Venv if Cache not found
+        if: steps.dependencies-cache.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+
       - name: Install dependencies
         if: steps.dependencies-cache.outputs.cache-hit != 'true'
         run: |
