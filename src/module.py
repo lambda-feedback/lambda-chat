@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, TypeAlias
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 try:
     from .agents.chatbot_summarised_memory_agent import ChatbotAgent
@@ -85,8 +85,10 @@ def chat_module(message: Any, params: Params) -> Result:
 
 
 # ######## INVOKE AGENTS ########
+# return type agents invoke
+InvokeAgentResponseType: TypeAlias = Dict[str, Any]
 
-def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, session_id: str):
+def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, session_id: str) -> InvokeAgentResponseType:
     """
     Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
     """
@@ -102,7 +104,7 @@ def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, se
         "intermediate_steps": []
     }
 
-def invoke_agent_no_memory(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str):
+def invoke_agent_no_memory(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
     """
     Call an agent that has no conversation memory and expects to receive all past messages in the params and the latest human request in the query.
     If conversation history longer than X, the agent will summarize the conversation and will provide a conversational style analysis.
@@ -123,7 +125,7 @@ def invoke_agent_no_memory(query: str, conversation_history: list, summary: str,
         "intermediate_steps": [str(summary), conversationalStyle, conversation_history]
     }
 
-def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = ""):
+def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: str = "") -> InvokeAgentResponseType:
     """
     Retry the simple agent if a tool fails to run.
     This can help when there are intermittent connection issues to external APIs.
@@ -152,7 +154,7 @@ def invoke_simple_agent_with_retry(query: str, session_id: str, prompt_prefix: s
         "intermediate_steps": intermediate_steps
     }
 
-def invoke_profiling_agent_with_retry(session_id: str):
+def invoke_profiling_agent_with_retry(session_id: str) -> InvokeAgentResponseType:
     """
     Retry the profiling agent if a tool fails to run.
     This can help when there are intermittent connection issues to external APIs.

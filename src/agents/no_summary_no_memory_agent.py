@@ -6,8 +6,12 @@ from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.graph.message import add_messages
-from typing import Annotated
+from typing import Annotated, TypeAlias
 from typing_extensions import TypedDict
+
+# TYPES
+ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
+AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
@@ -33,7 +37,7 @@ class ChatbotNoSummaryNoMemoryAgent:
 
         return {"messages": [response]}
     
-    def check_for_valid_messages(self, messages):
+    def check_for_valid_messages(self, messages: list[AllMessageTypes]) -> list[ValidMessageTypes]:
         """ Removing the RemoveMessage() from the list of messages """
         valid_messages = []
         for message in messages:
@@ -48,14 +52,14 @@ class ChatbotNoSummaryNoMemoryAgent:
         self.workflow.add_edge(START, "call_llm")
         self.workflow.add_edge("call_llm", END)
     
-    def print_update(self, update):
+    def print_update(self, update: dict):
         for k, v in update.items():
             for m in v["messages"]:
                 m.pretty_print()
             if "summary" in v:
                 print(v["summary"])
 
-    def pretty_response_value(self, event):
+    def pretty_response_value(self, event: dict) -> str:
         return event["messages"][-1].content
     
 

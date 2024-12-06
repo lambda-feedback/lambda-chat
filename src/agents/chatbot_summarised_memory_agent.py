@@ -6,12 +6,15 @@ from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState, StateGraph, START, END
 from langchain_core.runnables.config import RunnableConfig
-
-from typing import Literal
+from typing import Literal, TypeAlias
 
 # follow: 
 # https://langchain-ai.github.io/langgraph/how-tos/memory/add-summary-conversation-history/
 # https://langchain-ai.github.io/langgraph/how-tos/memory/delete-messages/
+
+# TYPES
+ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
+AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
 
 # We will add a `summary` attribute (in addition to `messages` key,
 # which MessagesState already has)
@@ -66,7 +69,7 @@ class ChatbotAgent:
         # Otherwise we can just end
         return END
     
-    def summarize_conversation(self, state: State):
+    def summarize_conversation(self, state: State) -> dict:
         # First, we summarize the conversation
         summary = state.get("summary", "")
         if summary:
@@ -89,7 +92,7 @@ class ChatbotAgent:
         delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
         return {"summary": response.content, "messages": delete_messages}
     
-    def check_for_valid_messages(self, messages):
+    def check_for_valid_messages(self, messages: list[AllMessageTypes]) -> list[ValidMessageTypes]:
         # Removing the RemoveMessage() from the list of messages
         valid_messages = []
         for message in messages:
@@ -97,7 +100,7 @@ class ChatbotAgent:
                 valid_messages.append(message)
         return valid_messages
     
-    def get_summary(self, config):
+    def get_summary(self, config: RunnableConfig) -> str:
         return self.app.get_state(config).values['summary'] if 'summary' in self.app.get_state(config).values else [] 
 
     def workflow_definition(self):
@@ -120,44 +123,44 @@ class ChatbotAgent:
         # This means that after `summarize_conversation` is called, we end.
         self.workflow.add_edge("summarize_conversation", END)
 
-    def print_update(self, update):
+    def print_update(self, update: dict):
         for k, v in update.items():
             for m in v["messages"]:
                 m.pretty_print()
             if "summary" in v:
                 print(v["summary"])
 
-    def pretty_response_value(self, event):
+    def pretty_response_value(self, event: dict) -> str:
         # print(event["messages"][-1])
         return event["messages"][-1].content
 
 
-if __name__ == "__main__":
-    # TESTING
-    chatbot_agent = ChatbotAgent()
-    from IPython.display import Image, display
+# if __name__ == "__main__":
+#     # TESTING
+#     chatbot_agent = ChatbotAgent()
+#     from IPython.display import Image, display
 
-    try:
-        display(Image(chatbot_agent.app.get_graph().draw_mermaid_png()))
-    except Exception:
-        # This requires some extra dependencies and is optional
-        print("Could not display the graph.")
-        pass
+#     try:
+#         display(Image(chatbot_agent.app.get_graph().draw_mermaid_png()))
+#     except Exception:
+#         # This requires some extra dependencies and is optional
+#         print("Could not display the graph.")
+#         pass
 
-    config = {"configurable": {"thread_id": "1"}}
+#     config = {"configurable": {"thread_id": "1"}}
 
-    while True:
-        user_input = input("User: ")
-        if user_input.lower() in ["quit", "q"]:
-            print("Goodbye!")
-            break
+#     while True:
+#         user_input = input("User: ")
+#         if user_input.lower() in ["quit", "q"]:
+#             print("Goodbye!")
+#             break
 
-        events = chatbot_agent.app.stream(
-            {"messages": [("user", user_input)]}, config, stream_mode="updates"
-        )
-        updates= chatbot_agent.app.get_state(config).values["messages"]
-        print(f"DEBUGGING: {updates}")
-        print(f"DEBUGGING: {chatbot_agent.get_summary(config)}")
-        for event in events:
-            chatbot_agent.print_update(event)
-            # event["messages"][-1].pretty_print()
+#         events = chatbot_agent.app.stream(
+#             {"messages": [("user", user_input)]}, config, stream_mode="updates"
+#         )
+#         updates= chatbot_agent.app.get_state(config).values["messages"]
+#         print(f"DEBUGGING: {updates}")
+#         print(f"DEBUGGING: {chatbot_agent.get_summary(config)}")
+#         for event in events:
+#             chatbot_agent.print_update(event)
+#             # event["messages"][-1].pretty_print()

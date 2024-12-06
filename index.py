@@ -19,7 +19,7 @@ def handler(event, context):
     if "params" not in event:
         return {
             "statusCode": 400,
-            "body": "Missing 'params' key in event. Please confirm the key in the json body."
+            "body": "Missing 'params' key in event. Please confirm the key in the json body. Make sure it contains the necessary conversation_id."
         }
     
     message = event.get("message", None)

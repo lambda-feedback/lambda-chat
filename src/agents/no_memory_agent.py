@@ -10,13 +10,17 @@ from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.graph.message import add_messages
-from typing import Annotated
+from typing import Annotated, TypeAlias
 from typing_extensions import TypedDict
 
-# TODO: Split the agent in multiple agents, optimisation?
+# NOTE: Split the agent in multiple agents, optimisation?
+
+# TYPES
+ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
+AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
 
 class State(TypedDict):
-    messages: Annotated[list, add_messages]
+    messages: Annotated[list[AllMessageTypes], add_messages]
     summary: str
     conversationalStyle: str
 
@@ -64,16 +68,16 @@ class ChatbotNoMemoryAgent:
 
         return {"summary": summary, "messages": [response]}
     
-    def check_for_valid_messages(self, messages):
+    def check_for_valid_messages(self, messages: list[AllMessageTypes]) -> list[ValidMessageTypes]:
         """ Removing the RemoveMessage() from the list of messages """
 
-        valid_messages = []
+        valid_messages: list[ValidMessageTypes] = []
         for message in messages:
             if message.type != 'remove':
                 valid_messages.append(message)
         return valid_messages
     
-    def summarize_conversation(self, state: State, config: RunnableConfig):
+    def summarize_conversation(self, state: State, config: RunnableConfig) -> dict:
         """Summarize the conversation."""
 
         summary = state.get("summary", "")
@@ -109,7 +113,7 @@ class ChatbotNoMemoryAgent:
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
         # Delete messages that are no longer wanted, except the last ones
-        delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
+        delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
         return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
     
@@ -131,7 +135,7 @@ class ChatbotNoMemoryAgent:
             return "summarize_conversation"
         return "call_llm"    
 
-    def workflow_definition(self):
+    def workflow_definition(self) -> None:
         self.workflow.add_node("call_llm", self.call_model)
         self.workflow.add_node("summarize_conversation", self.summarize_conversation)
 
@@ -139,20 +143,20 @@ class ChatbotNoMemoryAgent:
         self.workflow.add_edge("summarize_conversation", "call_llm")
         self.workflow.add_edge("call_llm", END)
 
-    def get_summary(self):
+    def get_summary(self) -> str:
         return self.summary
     
-    def get_conversational_style(self):
+    def get_conversational_style(self) -> str:
         return self.conversationalStyle
 
-    def print_update(self, update):
+    def print_update(self, update: dict) -> None:
         for k, v in update.items():
             for m in v["messages"]:
                 m.pretty_print()
             if "summary" in v:
                 print(v["summary"])
 
-    def pretty_response_value(self, event):
+    def pretty_response_value(self, event: dict) -> str:
         return event["messages"][-1].content
     
 
