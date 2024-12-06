@@ -46,6 +46,7 @@ jobs:
       - name: Run tests
         if: always()
         run: |
+          pip install pytest
           source .venv/bin/activate
           pytest --junit-xml=./reports/pytest.xml --tb=auto -v
 
