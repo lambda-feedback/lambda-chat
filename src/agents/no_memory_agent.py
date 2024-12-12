@@ -1,11 +1,11 @@
 try:
     from .llm_factory import OpenAILLMs
     from .prompts.sum_conv_pref import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
     from src.agents.prompts.sum_conv_pref import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
@@ -42,7 +42,7 @@ class ChatbotNoMemoryAgent:
         """Call the LLM model knowing the role system prompt, the summary and the conversational style."""
         
         # Default AI tutor role prompt
-        system_message = role_prompt
+        system_message = socratic_role_prompt
 
         # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
