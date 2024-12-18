@@ -9,7 +9,7 @@ This chapter helps you to quickly set up a new Python chat module function using
 > [!NOTE]
 > To develop this function further, you will require the following environment variables in your `.env` file:
 ```bash
-> If you use azureopenai:
+> If you use azure-openai:
 AZURE_OPENAI_API_KEY
 AZURE_OPENAI_ENDPOINT
 AZURE_OPENAI_API_VERSION
@@ -30,53 +30,29 @@ LANGCHAIN_API_KEY
 LANGCHAIN_PROJECT
 ```
 
-#### 1. Create a new repository
+#### 1. Clone the repository
 
-- In GitHub, choose `Use this template` > `Create a new repository` in the repository toolbar.
-
-- Choose the owner, and pick a name for the new repository.
-
-  > [!IMPORTANT]
-  > If you want to deploy the evaluation function to Lambda Feedback, make sure to choose the Lambda Feedback organization as the owner.
-
-- Set the visibility to `Public` or `Private`.
-
-  > [!IMPORTANT]
-  > If you want to use GitHub [deployment protection rules](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#deployment-protection-rules), make sure to set the visibility to `Public`.
-
-- Click on `Create repository`.
-
-#### 2. Clone the new repository
-
-Clone the new repository to your local machine using the following command:
+Clone this repository to your local machine using the following command:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/lambda-feedback/lambda-chat
 ```
 
-#### 3. Develop the chat function
+#### 2. Develop the chat function
 
 You're ready to start developing your chat function. Head over to the [Development](#development) section to learn more.
 
-#### 4. Update the README
+#### 3. Update the README
 
 In the `README.md` file, change the title and description so it fits the purpose of your chat function.
 
 Also, don't forget to update or delete the Quickstart chapter from the `README.md` file after you've completed these steps.
 
-## Run the Script
-
-You can run the Python function itself. Make sure to have a main function in either `src/module.py` or `index.py`.
-
-```bash
-python src/module.py
-```
-
 ## Development
 
-You can create your own invokation to your own agents hosted anywhere. You can add the new invokation in the `module.py` file. Then you can create your own agent script in the `src/agents` folder.
+You can create your own invocation to your own agents hosted anywhere. Copy the `base_agent` from `src/agents/` and edit it to match your LLM agent requirements. Import the new invocation in the `module.py` file.
 
-You agent can be based on an LLM hosted anywhere, you have available currenlty OpenAI, AzureOpenAI, and Ollama models but you can introduce your own API call in the `src/agents/llm_factory.py`.
+You agent can be based on an LLM hosted anywhere, you have available currently OpenAI, AzureOpenAI, and Ollama models but you can introduce your own API call in the `src/agents/llm_factory.py`.
 
 ### Prerequisites
 
@@ -93,6 +69,21 @@ You agent can be based on an LLM hosted anywhere, you have available currenlty O
 
 src/module.py       # chat_module function implementation
 src/module_test.py  # chat_module function tests
+src/agents/         # find all agents developed for the chat functionality
+src/agents/utils/test_prompts.py      # allows testing of any LLM agent on a couple of example inputs containing Lambda Feedback Questions and synthetic student conversations
+```
+
+## Run the Chat Script
+
+You can run the Python function itself. Make sure to have a main function in either `src/module.py` or `index.py`.
+
+```bash
+python src/module.py
+```
+
+You can also use the `test_prompts.py` script to test the agents with example inputs from Lambda Feedback questions and synthetic conversations.
+```bash
+python src/agents/utils/test_prompts.py
 ```
 
 ### Building the Docker Image
