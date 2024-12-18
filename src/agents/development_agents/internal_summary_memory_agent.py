@@ -1,21 +1,23 @@
 try:
-    from .llm_factory import OpenAILLMs
+    from ..llm_factory import OpenAILLMs
+    from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
+    from src.agents.utils.types import InvokeAgentResponseType
+
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState, StateGraph, START, END
 from langchain_core.runnables.config import RunnableConfig
-from typing import TypeAlias
+from typing import TypeAlias, Any, Dict
 
-# TYPES
 ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
 AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
 
 class State(MessagesState):
     summary: str
 
-class ProfilingAgent:
+class InternalSummaryMemoryAgent:
     def __init__(self):
         summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
@@ -83,6 +85,24 @@ Do not to focus on the details of the conversation. """ \
         print(f"DEBUGGING: {history_summarisation}")
 
         return {"messages": [HumanMessage(content=history_summarisation)]}
+
+agent = InternalSummaryMemoryAgent()
+def invoke_profiling_agent_with_retry(session_id: str) -> InvokeAgentResponseType:
+    """
+    Retry the profiling agent if a tool fails to run.
+    This can help when there are intermittent connection issues to external APIs.
+    """
+    print(f'in invoke_profiling_agent_with_retry(), session_id = {session_id}')
+
+    config = {"configurable": {"thread_id": session_id}}
+    response_events = agent.app.invoke({"messages": []}, config=config, stream_mode="values")
+    pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
+
+    return {
+        "input": "History of the conversation",
+        "output": pretty_printed_response,
+        "intermediate_steps": []
+    }
 
 # if __name__ == "__main__":
 #     # TESTING

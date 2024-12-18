@@ -1,12 +1,15 @@
 try:
-    from .llm_factory import OpenAILLMs
+    from ..llm_factory import OpenAILLMs
+    from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
+    from src.agents.utils.types import InvokeAgentResponseType
+    
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.graph.message import add_messages
-from typing import Annotated, TypeAlias
+from typing import Annotated, TypeAlias, Any, Dict
 from typing_extensions import TypedDict
 
 # TYPES
@@ -62,6 +65,23 @@ class ChatbotNoSummaryNoMemoryAgent:
     def pretty_response_value(self, event: dict) -> str:
         return event["messages"][-1].content
     
+
+agent = ChatbotNoSummaryNoMemoryAgent()
+def invoke_agent_no_summary_no_memory(query: str, conversation_history: list, session_id: str) -> InvokeAgentResponseType:
+    """
+    Call an agent that has no conversation memeory and expects to receive all past messages in the params and the latest human request in the query.
+    """
+    print(f'in invoke_agent_no_summary_no_memory(), query = {query}, thread_id = {session_id}')
+
+    config = {"configurable": {"thread_id": session_id}}
+    response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values")
+    pretty_printed_response = agent.pretty_response_value(response_events) # for last event in the response
+
+    return {
+        "input": query,
+        "output": pretty_printed_response,
+        "intermediate_steps": []
+    }
 
 # if __name__ == "__main__":
 #     # TESTING

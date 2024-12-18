@@ -13,11 +13,6 @@
         "type": "assistant",
         "content": "Hi! How can I help you with your question or any topic you're working on?"
       },
-      { "type": "user", "content": "say bye" },
-      {
-        "type": "assistant",
-        "content": "Sorry, I'm not familiar with that topic, but I can help you with the dot product question."
-      },
       { "type": "user", "content": "mock" }
     ],
     "summary": "",
