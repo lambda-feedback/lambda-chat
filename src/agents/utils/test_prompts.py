@@ -4,12 +4,16 @@
 
 import json
 try:
-    from .module import chat_module, invoke_agent_no_memory
+    from ..base_agent.base_agent import invoke_base_agent
+    from ..informational_agent.informational_agent import invoke_informational_agent
+    from ..socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
-    from src.module import chat_module, invoke_agent_no_memory
+    from src.agents.base_agent.base_agent import invoke_base_agent
+    from src.agents.informational_agent.informational_agent import invoke_informational_agent
+    from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
 
 # File path for the input text
-path = "src/agents/data/"
+path = "src/agents/utils/example_inputs/"
 input_file = path + "example_input_3.json"
 
 # Step 1: Read the input file
@@ -43,6 +47,8 @@ try:
         conversationalStyle = params["conversational_style"]
     if "question_response_details" in params:
         question_response_details = params["question_response_details"]
+    if "agent_type" in params:
+        agent_type = params["agent_type"]
     if "conversation_id" in params:
         conversation_id = params["conversation_id"]
     else:
@@ -51,12 +57,25 @@ try:
     """
       STEP 3: Call the LLM agent to get a response to the user's message
     """
-    response = invoke_agent_no_memory(query=message, \
-                                                conversation_history=conversation_history, \
-                                                summary=summary, \
-                                                conversationalStyle=conversationalStyle, \
-                                                question_response_details=question_response_details, \
-                                                session_id=conversation_id)
+    # NOTE: ### SET the agent type to use ###
+    agent_type = "informational" 
+    # NOTE: #################################
+
+    if agent_type == "socratic":
+        invoke = invoke_socratic_agent
+    elif agent_type == "informational":
+        invoke = invoke_informational_agent
+    else:
+        # default to 'base'
+        invoke = invoke_base_agent
+
+    response = invoke(query=message, \
+                            conversation_history=conversation_history, \
+                            summary=summary, \
+                            conversationalStyle=conversationalStyle, \
+                            question_response_details=question_response_details, \
+                            session_id=conversation_id)
+    
     print("AI Response:", response)
     
 

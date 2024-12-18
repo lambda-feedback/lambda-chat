@@ -26,7 +26,7 @@ class TestChatModuleFunction(unittest.TestCase):
     # TODO: update the test cases
 
     def test_missing_parameters(self):
-        # Checking state for missing parameters
+        # Checking state for missing parameters on default agent
         response, params = "Hello, World", Params()
         expected_params = Params(include_test_data=True, conversation_history=[], \
                                     summary="", conversational_style="", \
@@ -59,13 +59,15 @@ class TestChatModuleFunction(unittest.TestCase):
                 self.assertTrue("Internal Error" in str(cm.exception))
                 self.assertTrue("conversation id" in str(cm.exception))
 
-    def test_agent_output(self):
+    def test_all_agents_output(self):
         # Checking the output of the agents
-        response, params = "Hello, World", Params(conversation_id="1234Test")
+        agents = ["informational", "socratic"]
+        for agent in agents:
+            response, params = "Hello, World", Params(conversation_id="1234Test", agent_type=agent)
 
-        result = chat_module(response, params)
+            result = chat_module(response, params)
 
-        self.assertIsNotNone(result.get("chatbot_response"))
+            self.assertIsNotNone(result.get("chatbot_response"))
     
     def test_processing_time_calc(self):
         # Checking the processing time calculation

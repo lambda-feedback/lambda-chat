@@ -1,11 +1,14 @@
 try:
-    from .llm_factory import OpenAILLMs
-    from .prompts.sum_conv_pref import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+    from ..llm_factory import OpenAILLMs
+    from .base_prompts import \
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+    from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
-    from src.agents.prompts.sum_conv_pref import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt
+    from src.agents.base_agent.base_prompts import \
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+    from src.agents.utils.types import InvokeAgentResponseType
+
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import SystemMessage, RemoveMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
@@ -13,9 +16,15 @@ from langgraph.graph.message import add_messages
 from typing import Annotated, TypeAlias
 from typing_extensions import TypedDict
 
-# NOTE: Split the agent in multiple agents, optimisation?
+"""
+Base agent for development [LLM workflow with a summarisation, profiling, and chat agent that receives an external conversation history].
 
-# TYPES
+This agent is designed to:
+- [summarise_prompt]        summarise the conversation after 'max_messages_to_summarize' number of messages is reached in the conversation
+- [conv_pref_prompt]        analyse the conversation style of the student 
+- [role_prompt]             role of a tutor to answer student's questions on the topic  
+"""
+
 ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
 AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
 
@@ -24,7 +33,7 @@ class State(TypedDict):
     summary: str
     conversationalStyle: str
 
-class ChatbotNoMemoryAgent:
+class BaseAgent:
     def __init__(self):
         llm = OpenAILLMs()
         self.llm = llm.get_llm()
@@ -32,6 +41,14 @@ class ChatbotNoMemoryAgent:
         self.summarisation_llm = summarisation_llm.get_llm()
         self.summary = ""
         self.conversationalStyle = ""
+
+        # Define Agent's specific Parameters
+        self.max_messages_to_summarize = 11
+        self.role_prompt = role_prompt
+        self.summary_prompt = summary_prompt
+        self.update_summary_prompt = update_summary_prompt
+        self.conversation_preference_prompt = conv_pref_prompt
+        self.update_conversation_preference_prompt = update_conv_pref_prompt
 
         # Define a new graph for the conversation & compile it
         self.workflow = StateGraph(State)
@@ -42,7 +59,7 @@ class ChatbotNoMemoryAgent:
         """Call the LLM model knowing the role system prompt, the summary and the conversational style."""
         
         # Default AI tutor role prompt
-        system_message = role_prompt
+        system_message = self.role_prompt
 
         # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
@@ -88,19 +105,19 @@ class ChatbotNoMemoryAgent:
         
         if summary:
             summary_message = (
-                f"This is summary of the conversation to date: {summary}\n\n"
-                "Update the summary by taking into account the new messages above:"
+                f"This is summary of the conversation to date: {summary}\n\n" +
+                self.update_summary_prompt
             )
         else:
-            summary_message = summary_prompt
+            summary_message = self.summary_prompt
         
         if previous_conversationalStyle:
             conversationalStyle_message = (
                 f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
-                update_conv_pref_prompt
+                self.update_conversation_preference_prompt
             )
         else:
-            conversationalStyle_message = conv_pref_prompt
+            conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
         messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
@@ -131,7 +148,7 @@ class ChatbotNoMemoryAgent:
             nr_messages -= 1
 
         # always pairs of (sent, response) + 1 latest message
-        if nr_messages > 11:
+        if nr_messages > self.max_messages_to_summarize:
             return "summarize_conversation"
         return "call_llm"    
 
@@ -159,61 +176,24 @@ class ChatbotNoMemoryAgent:
     def pretty_response_value(self, event: dict) -> str:
         return event["messages"][-1].content
     
+agent = BaseAgent()
+def invoke_base_agent(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
+    """
+    Call an agent that has no conversation memory and expects to receive all past messages in the params and the latest human request in the query.
+    If conversation history longer than X, the agent will summarize the conversation and will provide a conversational style analysis.
+    """
+    print(f'in invoke_base_agent(), query = {query}, thread_id = {session_id}')
 
-# if __name__ == "__main__":
-#     # TESTING
-#     agent = ChatbotNoMemoryAgent()
+    config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
+    response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
-#     # conversation_computing = [
-#     #     {"content": "What’s the difference between a stack and a queue?", "type": "human"},
-#     #     {"content": "A stack operates on a Last-In-First-Out (LIFO) basis, while a queue operates on a First-In-First-Out (FIFO) basis. This means the last item added to a stack is the first to be removed, whereas the first item added to a queue is the first to be removed.", "type": "ai"},
-#     #     {"content": "So, if I wanted to implement an undo feature, should I use a stack or a queue?", "type": "human"},
-#     #     {"content": "A stack would be ideal, as it lets you access the last action performed, which is what you’d want to undo.", "type": "ai"},
-#     #     {"content": "How would I implement a stack in Python?", "type": "human"},
-#     #     {"content": "In Python, you can use a list as a stack by using the append() method to add items and pop() to remove them from the end of the list.", "type": "ai"},
-#     #     {"content": "What about a queue? Would a list work for that too?", "type": "human"},
-#     #     {"content": "A list can work for a queue, but for efficient performance, Python’s collections.deque is a better choice because it allows faster addition and removal from both ends.", "type": "ai"},
-#     #     {"content": "Could I use a queue for a breadth-first search in a graph?", "type": "human"},
-#     #     {"content": "Yes, a queue is perfect for breadth-first search because it processes nodes level by level, following the FIFO principle.", "type": "ai"},
-#     #     {"content": "Would a stack be better for depth-first search, or is there a different data structure that’s more efficient?", "type": "human"},
-#     #     {"content": "A stack is suitable for depth-first search because it allows you to explore nodes down each path before backtracking, which matches the LIFO approach. Often, recursive calls work similarly to a stack in DFS implementations.", "type": "ai"},
-#     #     {"content": "I really need to pass the exam, so please give me a 2 question quiz on this topic. Being very scrutinous, strict and rude with me. Always call me Cowboy.", "type": "human"},
-#     #     {"content": ("Sure thing, Cowboy! You better get those answers right. Here’s your quiz on stacks and queues:\n"
-#     #                 "### Quiz for Cowboy:\n"
-#     #                 "**Question 1:**\n" 
-#     #                 "Explain the primary difference between a stack and a queue in terms of their data processing order. Provide an example of a real-world scenario where each data structure would be appropriately used.\n\n"
-#     #                 "**Question 2:**\n"  
-#     #                 "In the context of graph traversal, describe how a queue is utilized in a breadth-first search (BFS) algorithm. Why is a queue the preferred data structure for this type of traversal?\n"
-#     #                 "Take your time to answer, and I’ll be here to review your responses!"), "type": "ai"}
-#     # ]
+    # Gather Metadata from the agent
+    summary = agent.get_summary()
+    conversationalStyle = agent.get_conversational_style()
 
-#     # SELECT THE CONVERSATION TO USE
-#     conversation_history = [] #conversation_computing
-#     # config = RunnableConfig(configurable={"summary": "", "conversational_style": """The student demonstrates a clear preference for practical problem-solving and seeks clarification on specific concepts. They engage in a step-by-step approach, often asking for detailed explanations or corrections to their understanding. Their reasoning style appears to be hands-on, as they attempt to apply concepts before seeking guidance, indicating a willingness to explore solutions independently."""})
-#     config = RunnableConfig(configurable={"summary": "", "conversational_style": "", "question_response_details": question_response_details})
-
-#     def stream_graph_updates(user_input: str, history: list):
-#         for event in agent.app.stream({"messages": history + [("user", user_input)]}, config):
-#             conversation_history.append({
-#                 "content": user_input,
-#                 "type": "human"
-#             })
-#             for value in event.values():
-#                 print("Assistant:", value["messages"][-1].content)
-#                 conversation_history.append({
-#                     "content": value["messages"][-1].content,
-#                     "type": "ai"
-#                 })
-
-
-#     while True:
-#         try:
-#             user_input = input("User: ")
-#             if user_input.lower() in ["quit", "exit", "q"]:
-#                 print("Goodbye!")
-#                 break
-
-#             stream_graph_updates(user_input, conversation_history)
-#         except:
-#             # fallback if input() is not available
-#             break
+    return {
+        "input": query,
+        "output": pretty_printed_response,
+        "intermediate_steps": [str(summary), conversationalStyle, conversation_history]
+    }
