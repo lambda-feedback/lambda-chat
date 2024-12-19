@@ -4,10 +4,12 @@
 
 import json
 try:
+    from ..utils.parseJSONtoPrompt import parse_json_to_prompt
     from ..base_agent.base_agent import invoke_base_agent
     from ..informational_agent.informational_agent import invoke_informational_agent
     from ..socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
+    from src.agents.utils.parseJSONtoPrompt import parse_json_to_prompt
     from src.agents.base_agent.base_agent import invoke_base_agent
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
@@ -28,7 +30,7 @@ try:
       STEP 2: Extract the parameters from the JSON
     """
     # NOTE: #### This is the testing message!! #####
-    message = "tell me about fourier series" 
+    message = "I am stuck, tell me about fourier series" 
     # NOTE: ########################################
 
     # replace "mock" in the message and conversation history with the actual message
@@ -47,6 +49,16 @@ try:
         conversationalStyle = params["conversational_style"]
     if "question_response_details" in params:
         question_response_details = params["question_response_details"]
+        question_submission_summary = question_response_details["questionSubmissionSummary"] if "questionSubmissionSummary" in question_response_details else []
+        question_information = question_response_details["questionInformation"] if "questionInformation" in question_response_details else {}
+        question_access_information = question_response_details["questionAccessInformation"] if "questionAccessInformation" in question_response_details else {}
+        question_response_details_prompt = parse_json_to_prompt(
+            question_submission_summary,
+            question_information,
+            question_access_information
+        )
+        print("Question Response Details Prompt:", question_response_details_prompt, "\n\n")
+
     if "agent_type" in params:
         agent_type = params["agent_type"]
     if "conversation_id" in params:
@@ -58,7 +70,7 @@ try:
       STEP 3: Call the LLM agent to get a response to the user's message
     """
     # NOTE: ### SET the agent type to use ###
-    agent_type = "informational" 
+    agent_type = "socratic" 
     # NOTE: #################################
 
     if agent_type == "socratic":

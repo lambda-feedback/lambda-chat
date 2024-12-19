@@ -30,7 +30,7 @@ class TestChatModuleFunction(unittest.TestCase):
         response, params = "Hello, World", Params()
         expected_params = Params(include_test_data=True, conversation_history=[], \
                                     summary="", conversational_style="", \
-                                    question_response_details="", conversation_id="1234Test")
+                                    question_response_details={}, conversation_id="1234Test")
 
         for p in expected_params:
             params = expected_params.copy()
