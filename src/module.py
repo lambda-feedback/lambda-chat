@@ -1,10 +1,14 @@
+import json
 from typing import Any
+
 try:
     from .module_response import Result, Params
+    from .agents.utils.parseJSONtoPrompt import parse_json_to_prompt
     from .agents.informational_agent.informational_agent import invoke_informational_agent
     from .agents.socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
     from src.module_response import Result, Params
+    from src.agents.utils.parseJSONtoPrompt import parse_json_to_prompt
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
 import time
@@ -37,7 +41,7 @@ def chat_module(message: Any, params: Params) -> Result:
     conversation_history = []
     summary = ""
     conversationalStyle = ""
-    question_response_details = ""
+    question_response_details_prompt = ""
     agent_type = "informational" # default
 
     if "include_test_data" in params:
@@ -50,12 +54,22 @@ def chat_module(message: Any, params: Params) -> Result:
         conversationalStyle = params["conversational_style"]
     if "question_response_details" in params:
         question_response_details = params["question_response_details"]
+        question_submission_summary = question_response_details["questionSubmissionSummary"] if "questionSubmissionSummary" in question_response_details else []
+        question_information = question_response_details["questionInformation"] if "questionInformation" in question_response_details else {}
+        question_access_information = question_response_details["questionAccessInformation"] if "questionAccessInformation" in question_response_details else {}
+        question_response_details_prompt = parse_json_to_prompt(
+            question_submission_summary,
+            question_information,
+            question_access_information
+        )
     if "agent_type" in params:
         agent_type = params["agent_type"]
     if "conversation_id" in params:
         conversation_id = params["conversation_id"]
     else:
         raise Exception("Internal Error: The conversation id is required in the parameters of the chat module.")
+    
+    
     
     start_time = time.time()
    
@@ -69,7 +83,7 @@ def chat_module(message: Any, params: Params) -> Result:
                             conversation_history=conversation_history, \
                             summary=summary, \
                             conversationalStyle=conversationalStyle, \
-                            question_response_details=question_response_details, \
+                            question_response_details=question_response_details_prompt, \
                             session_id=conversation_id)
 
     end_time = time.time()
