@@ -4,10 +4,12 @@ from typing import List, Optional, Union, Dict
 class StudentLatestSubmission:
     def __init__(
         self,
+        responseAreaUniversalId: Optional[str] = None,
         answer: Optional[str] = None,
         submission: Optional[str] = None,
         feedback: Optional[str] = None,
     ):
+        self.responseAreaUniversalId = responseAreaUniversalId
         self.answer = answer
         self.submission = submission
         self.feedback = feedback
