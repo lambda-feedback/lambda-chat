@@ -4,7 +4,7 @@
     "include_test_data": true,
     "conversation_history": [
       { "type": "user", "content": "hi" },
-      { "type": "agent", "content": "Hello! How can I help you today?" }
+      { "type": "ai", "content": "Hello! How can I help you today?" }
     ],
     "summary": "",
     "conversational_style": "",
