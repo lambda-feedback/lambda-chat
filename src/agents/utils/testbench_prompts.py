@@ -4,12 +4,12 @@
 
 import json
 try:
-    from ..utils.parseJSONtoPrompt import parse_json_to_prompt
+    from .parse_json_to_prompt import parse_json_to_prompt
     from ..base_agent.base_agent import invoke_base_agent
     from ..informational_agent.informational_agent import invoke_informational_agent
     from ..socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
-    from src.agents.utils.parseJSONtoPrompt import parse_json_to_prompt
+    from src.agents.utils.parse_json_to_prompt import parse_json_to_prompt
     from src.agents.base_agent.base_agent import invoke_base_agent
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
