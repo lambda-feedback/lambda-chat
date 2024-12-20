@@ -16,7 +16,7 @@ except ImportError:
 
 # File path for the input text
 path = "src/agents/utils/example_inputs/"
-input_file = path + "example_input_3.json"
+input_file = path + "example_input_4.json"
 
 # Step 1: Read the input file
 with open(input_file, "r") as file:
