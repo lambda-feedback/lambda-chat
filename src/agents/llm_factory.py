@@ -6,6 +6,7 @@ from langchain_community.llms import Ollama
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 class AzureLLMs:
     def __init__(self):
@@ -68,3 +69,15 @@ class OpenAILLMs:
     
     def get_embedding(self):
         return self._openai_embedding
+
+class GoogleAILLMs:
+    def __init__(self):
+
+        self._google_llm = ChatGoogleGenerativeAI(
+            model=os.environ['GOOGLE_AI_MODEL'],
+            temperature=0,
+            google_api_key=os.environ['GOOGLE_AI_API_KEY'],
+        )
+    
+    def get_llm(self):
+        return self._google_llm

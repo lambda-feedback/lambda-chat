@@ -30,7 +30,7 @@ try:
       STEP 2: Extract the parameters from the JSON
     """
     # NOTE: #### This is the testing message!! #####
-    message = "I am stuck, tell me about fourier series" 
+    message = "Hi" 
     # NOTE: ########################################
 
     # replace "mock" in the message and conversation history with the actual message
@@ -70,7 +70,7 @@ try:
       STEP 3: Call the LLM agent to get a response to the user's message
     """
     # NOTE: ### SET the agent type to use ###
-    agent_type = "socratic" 
+    agent_type = "informational" 
     # NOTE: #################################
 
     if agent_type == "socratic":
@@ -85,10 +85,11 @@ try:
                             conversation_history=conversation_history, \
                             summary=summary, \
                             conversationalStyle=conversationalStyle, \
-                            question_response_details=question_response_details, \
+                            question_response_details=question_response_details_prompt, \
                             session_id=conversation_id)
     
-    print("AI Response:", response)
+    print(response)
+    print("AI Response:", response['output'])
     
 
 except json.JSONDecodeError as e:
