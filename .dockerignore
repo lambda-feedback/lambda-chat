@@ -145,3 +145,6 @@ data/
 
 # Test reports
 reports/
+
+# Synthetic data conversations
+src/agents/utils/synthetic_conversations/*.json
