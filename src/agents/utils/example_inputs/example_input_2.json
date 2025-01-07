@@ -222,6 +222,7 @@
         }
       }
     },
-    "conversation_id": "64602b9c-4101-4981-b501-44f6dab61ab8"
+    "conversation_id": "64602b9c-4101-4981-b501-44f6dab61ab8",
+    "agent_type": "informational"
   }
 }

@@ -78,8 +78,7 @@ try:
     elif agent_type == "informational":
         invoke = invoke_informational_agent
     else:
-        # default to 'base'
-        invoke = invoke_base_agent
+        raise Exception("Unknown Tutor Agent Type")
 
     response = invoke(query=message, \
                             conversation_history=conversation_history, \

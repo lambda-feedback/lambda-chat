@@ -75,9 +75,10 @@ def chat_module(message: Any, params: Params) -> Result:
    
     if agent_type == "socratic":
         invoke = invoke_socratic_agent
-    else:
-        # default to 'informational'
+    elif agent_type == "informational":
         invoke = invoke_informational_agent
+    else:
+        raise Exception("Input Parameter Error: Unknown Chat Agent Type")
 
     chatbot_response = invoke(query=message, \
                             conversation_history=conversation_history, \

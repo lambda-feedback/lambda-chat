@@ -1,12 +1,14 @@
 try:
-    from ..llm_factory import GoogleAILLMs
-    from .google_learnLM_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+    from ..llm_factory import OpenAILLMs
+    from .student_prompts import \
+        base_student_prompt, curious_student_prompt, contradicting_student_prompt, reliant_student_prompt, confused_student_prompt, unrelated_student_prompt, \
+        summary_prompt, update_summary_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
-    from src.agents.llm_factory import GoogleAILLMs
-    from src.agents.google_learnLM_agent.google_learnLM_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+    from src.agents.llm_factory import OpenAILLMs
+    from src.agents.student_agent.student_prompts import \
+        base_student_prompt, curious_student_prompt, contradicting_student_prompt, reliant_student_prompt, confused_student_prompt, unrelated_student_prompt, \
+        summary_prompt, update_summary_prompt
     from src.agents.utils.types import InvokeAgentResponseType
 
 from langgraph.graph import StateGraph, START, END
@@ -17,16 +19,13 @@ from typing import Annotated, TypeAlias
 from typing_extensions import TypedDict
 
 """
-GOOGLE's LearnLM-Tutor agent based on https://arxiv.org/pdf/2412.16429v2 available experimentally on Google AI Studio.
-Docs: https://ai.google.dev/gemini-api/docs/learnlm
-[LLM workflow with a summarisation, profiling, and chat agent that receives an external conversation history].
-
-Used as one of the baselines for comparison for the other agents.
+Student agent for synthetic evaluation of the other LLM tutors. This agent is designed to be a student that requires help in the conversation. 
+[LLM workflow with a summarisation, and chat agent that receives an external conversation history].
 
 This agent is designed to:
 - [summarise_prompt]        summarise the conversation after 'max_messages_to_summarize' number of messages is reached in the conversation
-- [conv_pref_prompt]        analyse the conversation style of the student 
-- [role_prompt]             role of a tutor to answer student's questions on the topic  
+- [role_prompt]             role of a student to ask questions on the topic  
+- [student_type]            student's learning profile and comprehension level [many profiles can be chosen from the student_prompts.py]
 """
 
 ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
@@ -37,23 +36,34 @@ class State(TypedDict):
     summary: str
     conversationalStyle: str
 
-class GoogleLearnLMAgent:
-    def __init__(self):
-        llm = GoogleAILLMs()
+class StudentAgent:
+    def __init__(self, student_type: str):
+        llm = OpenAILLMs()
         self.llm = llm.get_llm()
-        summarisation_llm = GoogleAILLMs()
+        summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
         self.summary = ""
         self.conversationalStyle = ""
+        self.type = student_type
 
         # Define Agent's specific Parameters
         self.max_messages_to_summarize = 11
-        self.role_prompt = role_prompt
         self.summary_prompt = summary_prompt
         self.update_summary_prompt = update_summary_prompt
-        self.conversation_preference_prompt = conv_pref_prompt
-        self.update_conversation_preference_prompt = update_conv_pref_prompt
-
+        if self.type == "base":
+            self.role_prompt = base_student_prompt
+        elif self.type == "curious":
+            self.role_prompt = curious_student_prompt
+        elif self.type == "contradicting":
+            self.role_prompt = contradicting_student_prompt
+        elif self.type == "reliant":
+            self.role_prompt = reliant_student_prompt
+        elif self.type == "confused":
+            self.role_prompt = confused_student_prompt
+        elif self.type == "unrelated":
+            self.role_prompt = unrelated_student_prompt
+        else:
+            raise Exception("Unknown Student Agent Type")
         # Define a new graph for the conversation & compile it
         self.workflow = StateGraph(State)
         self.workflow_definition()
@@ -75,8 +85,6 @@ class GoogleLearnLMAgent:
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
             system_message += f"## Summary of conversation earlier: {summary} \n\n"
-        if conversationalStyle:
-            system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
         messages = [SystemMessage(content=system_message)] + state['messages']
 
@@ -85,7 +93,6 @@ class GoogleLearnLMAgent:
 
         # Save summary for fetching outside the class
         self.summary = summary
-        self.conversationalStyle = conversationalStyle
 
         return {"summary": summary, "messages": [response]}
     
@@ -103,7 +110,6 @@ class GoogleLearnLMAgent:
 
         summary = state.get("summary", "")
         previous_summary = config["configurable"].get("summary", "")
-        previous_conversationalStyle = config["configurable"].get("conversational_style", "")
         if previous_summary:
             summary = previous_summary
         
@@ -114,29 +120,16 @@ class GoogleLearnLMAgent:
             )
         else:
             summary_message = self.summary_prompt
-        
-        if previous_conversationalStyle:
-            conversationalStyle_message = (
-                f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
-                self.update_conversation_preference_prompt
-            )
-        else:
-            conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
         messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
         valid_messages = self.check_for_valid_messages(messages)
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
-        # STEP 2: Analyze the conversational style
-        messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
-        valid_messages = self.check_for_valid_messages(messages)
-        conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
-
         # Delete messages that are no longer wanted, except the last ones
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
-        return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
+        return {"summary": summary_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
         """
@@ -166,9 +159,6 @@ class GoogleLearnLMAgent:
 
     def get_summary(self) -> str:
         return self.summary
-    
-    def get_conversational_style(self) -> str:
-        return self.conversationalStyle
 
     def print_update(self, update: dict) -> None:
         for k, v in update.items():
@@ -180,24 +170,22 @@ class GoogleLearnLMAgent:
     def pretty_response_value(self, event: dict) -> str:
         return event["messages"][-1].content
     
-agent = GoogleLearnLMAgent()
-def invoke_google_learnlm_agent(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
+def invoke_student_agent(query: str, conversation_history: list, summary: str, student_type:str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
     """
-    Call an agent that has no conversation memory and expects to receive all past messages in the params and the latest human request in the query.
-    If conversation history longer than X, the agent will summarize the conversation and will provide a conversational style analysis.
+    Call a base student agents that forms a basic conversation with the tutor agent.
     """
-    print(f'in invoke_google_learnlm_agent(), query = {query}, thread_id = {session_id}')
+    print(f'in invoke_base_student_agent(), query = {query}, thread_id = {session_id}')
+    agent = StudentAgent(student_type=student_type)
 
-    config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
+    config = {"configurable": {"thread_id": session_id, "summary": summary, "question_response_details": question_response_details}}
     response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
     pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
     # Gather Metadata from the agent
     summary = agent.get_summary()
-    conversationalStyle = agent.get_conversational_style()
 
     return {
         "input": query,
         "output": pretty_printed_response,
-        "intermediate_steps": [str(summary), conversationalStyle, conversation_history]
+        "intermediate_steps": [str(summary), conversation_history]
     }

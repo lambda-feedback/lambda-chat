@@ -167,6 +167,7 @@
         }
       }
     },
-    "conversation_id": "7a65b6ed-85d1-4621-8efb-4fc8e9c5a8de"
+    "conversation_id": "7a65b6ed-85d1-4621-8efb-4fc8e9c5a8de",
+    "agent_type": "informational"
   }
 }
