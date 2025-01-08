@@ -70,7 +70,7 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
   for i in range(0,num_turns):
     print(f"Turn {i+1} of {num_turns}")
     if len(conversation_history) == 0:
-      message = "Ask a question."
+      message = "Ask me a question regarding your thoughts on the learning materials that you are currently woking on."
     else:
       message = conversation_history[-1]["content"]
 
@@ -78,13 +78,13 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
       # Student starts
       student_response = invoke_student_agent(message, conversation_history[:-1], summary, student_agent_type, question_response_details_prompt, conversation_id)
       conversation_history.append({
-        "type": "user",
+        "role": "assistant",
         "content": student_response["output"]
       })
     else:
       tutor_response = invoke_tutor_agent(message, conversation_history[:-1], summary, conversational_style, question_response_details_prompt, conversation_id)
       conversation_history.append({
-        "type": "assistant",
+        "role": "assistant",
         "content": tutor_response["output"]
       })
 
@@ -102,11 +102,11 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
 
 
 if __name__ == "__main__":
-  #  Define Conversation Parameters
-  num_turns = 10
-  tutor_agent_types   = ["informational", "socratic", "google_learnlm"]                           # Can be "informational", "socratic", "google_learnlm"
-  student_agent_types = ["curious", "contradicting", "reliant", "confused"]  
+  num_turns = 6
+  # Can be "informational", "socratic", "google_learnlm"
+  tutor_agent_types   = ["socratic"]                           
   # Can be "base", "curious", "contradicting", "reliant", "confused", "unrelated"
+  student_agent_types = ["base", "curious", "contradicting", "reliant", "confused", "unrelated"]  
 
   #  Read all question files
   questions = []

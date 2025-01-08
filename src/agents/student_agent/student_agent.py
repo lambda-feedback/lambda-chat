@@ -1,13 +1,13 @@
 try:
     from ..llm_factory import OpenAILLMs
     from .student_prompts import \
-        base_student_prompt, curious_student_prompt, contradicting_student_prompt, reliant_student_prompt, confused_student_prompt, unrelated_student_prompt, \
+        base_student_persona, curious_student_persona, contradicting_student_persona, reliant_student_persona, confused_student_persona, unrelated_student_persona, \
         process_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
     from src.agents.student_agent.student_prompts import \
-        base_student_prompt, curious_student_prompt, contradicting_student_prompt, reliant_student_prompt, confused_student_prompt, unrelated_student_prompt, \
+        base_student_persona, curious_student_persona, contradicting_student_persona, reliant_student_persona, confused_student_persona, unrelated_student_persona, \
         process_prompt
     from src.agents.utils.types import InvokeAgentResponseType
 
@@ -42,20 +42,20 @@ class StudentAgent:
         self.conversationalStyle = ""
         self.type = student_type
 
-        # Define Agent's specific Parameters
+        # Define Agent's specific Personas
         self.role_prompt = process_prompt
         if self.type == "base":
-            self.role_prompt += base_student_prompt
+            self.role_prompt += base_student_persona
         elif self.type == "curious":
-            self.role_prompt += curious_student_prompt
+            self.role_prompt += curious_student_persona
         elif self.type == "contradicting":
-            self.role_prompt += contradicting_student_prompt
+            self.role_prompt += contradicting_student_persona
         elif self.type == "reliant":
-            self.role_prompt += reliant_student_prompt
+            self.role_prompt += reliant_student_persona
         elif self.type == "confused":
-            self.role_prompt += confused_student_prompt
+            self.role_prompt += confused_student_persona
         elif self.type == "unrelated":
-            self.role_prompt += unrelated_student_prompt
+            self.role_prompt += unrelated_student_persona
         else:
             raise Exception("Unknown Student Agent Type")
         # Define a new graph for the conversation & compile it
@@ -75,7 +75,8 @@ class StudentAgent:
             # convert "my" to "your" in the question_response_details to preserve the student agent as the user
             question_response_details = question_response_details.replace("My", "Your")
             question_response_details = question_response_details.replace("my", "your")
-            system_message += f"\n\n## Known Question Materials: {question_response_details} \n\n"
+            question_response_details = question_response_details.replace("I am", "you are")
+            system_message += f"\n\n## Known Learning Materials: {question_response_details} \n\n"
 
         # Adding summary and conversational style to the system message
         summary = state.get("summary", "")
