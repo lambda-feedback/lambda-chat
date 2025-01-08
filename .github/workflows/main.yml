@@ -104,7 +104,7 @@ jobs:
       - name: Approve Production Deployment
         uses: trstringer/manual-approval@v1
         with:
-          approvers: approvers # lambda feedback defined team in organisation
+          approvers: lambda-feedback/approvers # lambda feedback defined team in organisation
           minimum-approvals: 1
           timeout-minutes: 10
           secret: ${{ secrets.GITHUB_TOKEN }}
