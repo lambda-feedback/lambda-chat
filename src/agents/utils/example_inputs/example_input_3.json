@@ -137,6 +137,7 @@
         }
       }
     },
-    "conversation_id": "6779b184-41b5-4384-ade9-1c06d2cd91a5"
+    "conversation_id": "6779b184-41b5-4384-ade9-1c06d2cd91a5",
+    "agent_type": "informational"
   }
 }

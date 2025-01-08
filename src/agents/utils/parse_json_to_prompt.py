@@ -4,13 +4,17 @@ from typing import List, Optional, Union, Dict
 class StudentLatestSubmission:
     def __init__(
         self,
+        universalResponseAreaId: Optional[str] = None,
         answer: Optional[str] = None,
         submission: Optional[str] = None,
         feedback: Optional[str] = None,
+        rawResponse: Optional[dict] = None,
     ):
+        self.universalResponseAreaId = universalResponseAreaId
         self.answer = answer
         self.submission = submission
         self.feedback = feedback
+        self.rawResponse = rawResponse
 
 class StudentWorkResponseArea:
     def __init__(

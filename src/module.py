@@ -3,12 +3,12 @@ from typing import Any
 
 try:
     from .module_response import Result, Params
-    from .agents.utils.parseJSONtoPrompt import parse_json_to_prompt
+    from .agents.utils.parse_json_to_prompt import parse_json_to_prompt
     from .agents.informational_agent.informational_agent import invoke_informational_agent
     from .agents.socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
     from src.module_response import Result, Params
-    from src.agents.utils.parseJSONtoPrompt import parse_json_to_prompt
+    from src.agents.utils.parse_json_to_prompt import parse_json_to_prompt
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
 import time
@@ -75,9 +75,10 @@ def chat_module(message: Any, params: Params) -> Result:
    
     if agent_type == "socratic":
         invoke = invoke_socratic_agent
-    else:
-        # default to 'informational'
+    elif agent_type == "informational":
         invoke = invoke_informational_agent
+    else:
+        raise Exception("Input Parameter Error: Unknown Chat Agent Type")
 
     chatbot_response = invoke(query=message, \
                             conversation_history=conversation_history, \

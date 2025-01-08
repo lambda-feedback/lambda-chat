@@ -145,3 +145,15 @@ data/
 
 # Test reports
 reports/
+
+# Synthetic data conversations
+src/agents/utils/example_inputs/
+src/agents/utils/synthetic_conversations/
+src/agents/utils/synthetic_conversation_generator.py
+src/agents/utils/testbench_prompts.py
+src/agents/utils/langgraph_viz.py
+
+# development agents
+src/agents/student_agent/
+src/agents/development_agents/
+src/agents/google_learnML_agent/

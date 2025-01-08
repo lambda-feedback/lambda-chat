@@ -4,19 +4,19 @@
 
 import json
 try:
-    from ..utils.parseJSONtoPrompt import parse_json_to_prompt
+    from .parse_json_to_prompt import parse_json_to_prompt
     from ..base_agent.base_agent import invoke_base_agent
     from ..informational_agent.informational_agent import invoke_informational_agent
     from ..socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
-    from src.agents.utils.parseJSONtoPrompt import parse_json_to_prompt
+    from src.agents.utils.parse_json_to_prompt import parse_json_to_prompt
     from src.agents.base_agent.base_agent import invoke_base_agent
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
 
 # File path for the input text
 path = "src/agents/utils/example_inputs/"
-input_file = path + "example_input_3.json"
+input_file = path + "example_input_4.json"
 
 # Step 1: Read the input file
 with open(input_file, "r") as file:
@@ -30,7 +30,7 @@ try:
       STEP 2: Extract the parameters from the JSON
     """
     # NOTE: #### This is the testing message!! #####
-    message = "I am stuck, tell me about fourier series" 
+    message = "Hi" 
     # NOTE: ########################################
 
     # replace "mock" in the message and conversation history with the actual message
@@ -70,7 +70,7 @@ try:
       STEP 3: Call the LLM agent to get a response to the user's message
     """
     # NOTE: ### SET the agent type to use ###
-    agent_type = "socratic" 
+    agent_type = "informational" 
     # NOTE: #################################
 
     if agent_type == "socratic":
@@ -78,17 +78,17 @@ try:
     elif agent_type == "informational":
         invoke = invoke_informational_agent
     else:
-        # default to 'base'
-        invoke = invoke_base_agent
+        raise Exception("Unknown Tutor Agent Type")
 
     response = invoke(query=message, \
                             conversation_history=conversation_history, \
                             summary=summary, \
                             conversationalStyle=conversationalStyle, \
-                            question_response_details=question_response_details, \
+                            question_response_details=question_response_details_prompt, \
                             session_id=conversation_id)
     
-    print("AI Response:", response)
+    print(response)
+    print("AI Response:", response['output'])
     
 
 except json.JSONDecodeError as e:
