@@ -1,19 +1,14 @@
 {
-  "message": "mock",
+  "message": "i dont remember anything",
   "params": {
     "include_test_data": true,
     "conversation_history": [
-      { "type": "user", "content": "hi" },
+      { "type": "user", "content": "what should I do?" },
       {
         "type": "assistant",
-        "content": "How can I assist you today? Are you working on the dot product question?"
+        "content": "It seems like you're currently working on Part (a) of the dot product question. Since you haven't submitted an answer yet, let's take a moment to break it down together. \n\nWhat do you remember about how to calculate the dot product of two vectors? Can you describe the steps you would take?"
       },
-      { "type": "user", "content": "say hi" },
-      {
-        "type": "assistant",
-        "content": "Hi! How can I help you with your question or any topic you're working on?"
-      },
-      { "type": "user", "content": "mock" }
+      { "type": "user", "content": "i dont remember anything" }
     ],
     "summary": "",
     "conversational_style": "",
@@ -158,7 +153,7 @@
       "questionAccessInformation": {
         "estimatedMinimumTime": "1 minute",
         "estimaredMaximumTime": "4 minutes",
-        "timeTaken": "23792 minutes",
+        "timeTaken": "20 minutes",
         "accessStatus": "too much time spent on this question.",
         "markedDone": "",
         "currentPart": {
@@ -168,6 +163,6 @@
       }
     },
     "conversation_id": "7a65b6ed-85d1-4621-8efb-4fc8e9c5a8de",
-    "agent_type": "informational"
+    "agent_type": "socratic"
   }
 }

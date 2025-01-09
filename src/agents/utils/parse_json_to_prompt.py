@@ -189,7 +189,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};
     Description of Question: {questionInformation.questionContent};
     Expected Time to Complete the Question: {f'{questionInformation.durationLowerBound} - {questionInformation.durationUpperBound} min;' if questionInformation.durationLowerBound and questionInformation.durationUpperBound else 'No specified duration.'}
-    Time Spent on the Question This Session: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'since {questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else ''} {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''};
+    Time Spent on the Question This Session: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'since {questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''}}; 
     """
 
     partsDetails = "\n".join(

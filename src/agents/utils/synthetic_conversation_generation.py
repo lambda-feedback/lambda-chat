@@ -18,6 +18,7 @@ The student can have multiple skill levels and conversational styles. Those are 
 Any of the models accessible through the API calls defined in the 'llm_factory.py' can be used for either the tutor and the agent LLM.
 """
 
+import csv
 import json
 try:
   from ..student_agent.student_agent import invoke_student_agent
@@ -104,7 +105,7 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
 if __name__ == "__main__":
   num_turns = 6
   # Can be "informational", "socratic", "google_learnlm"
-  tutor_agent_types   = ["socratic"]                           
+  tutor_agent_types   = ["google_learnlm"]                           
   # Can be "base", "curious", "contradicting", "reliant", "confused", "unrelated"
   student_agent_types = ["base", "curious", "contradicting", "reliant", "confused", "unrelated"]  
 
@@ -116,15 +117,25 @@ if __name__ == "__main__":
     if filename.endswith("1.json"):
       questions.append(os.path.join(example_inputs_folder, filename))
 
-  for student_agent_type in student_agent_types:
     for tutor_agent_type in tutor_agent_types:
-      for question in questions:
-        with open(question, "r") as file:
-          raw_text = file.read()
+      # Open CSV file for writing
+      csv_filename = os.path.join(output_folder, "all_conversations_"+tutor_agent_type+".csv")
+      with open(csv_filename, "w", newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        # Write the header
+        csv_writer.writerow(["tutor", "student", "conversation", "conversation_id"])
+      
+        for student_agent_type in student_agent_types:
+          for question in questions:
+            with open(question, "r") as file:
+              raw_text = file.read()
 
-          conversation = generate_synthetic_conversations(raw_text, num_turns, student_agent_type, tutor_agent_type)
+              conversation = generate_synthetic_conversations(raw_text, num_turns, student_agent_type, tutor_agent_type)
 
-          conversation_output_filename = output_folder + question.split('/')[-1].replace(".json", "_"+student_agent_type+"_"+tutor_agent_type+"_conversation.json")
-          with open(conversation_output_filename, "w") as file:
-            json.dump(conversation, file, indent=2)
+              conversation_output_filename = output_folder + question.split('/')[-1].replace(".json", "_"+student_agent_type+"_"+tutor_agent_type+"_conversation.json")
+              with open(conversation_output_filename, "w") as file:
+                json.dump(conversation, file, indent=2)
 
+              # Write to CSV
+              conversation_id = conversation["conversation_id"]
+              csv_writer.writerow([tutor_agent_type, student_agent_type, conversation["conversation"], conversation_id])
