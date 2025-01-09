@@ -223,7 +223,7 @@
       "questionAccessInformation": {
         "estimatedMinimumTime": "3 minutes",
         "estimaredMaximumTime": "7 minutes",
-        "timeTaken": "43881 minutes",
+        "timeTaken": "40 minutes",
         "accessStatus": "too much time spent on this question.",
         "markedDone": "Part (a) was marked done",
         "currentPart": {
