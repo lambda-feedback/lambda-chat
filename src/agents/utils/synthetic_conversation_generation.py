@@ -105,7 +105,7 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
 if __name__ == "__main__":
   num_turns = 6
   # Can be "informational", "socratic", "google_learnlm"
-  tutor_agent_types   = ["socratic"]                           
+  tutor_agent_types   = ["google_learnlm"]                           
   # Can be "base", "curious", "contradicting", "reliant", "confused", "unrelated"
   student_agent_types = ["base", "curious", "contradicting", "reliant", "confused", "unrelated"]  
 
