@@ -1,12 +1,12 @@
 try:
     from ..llm_factory import OpenAILLMs
     from .socratic_prompts import \
-        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
     from src.agents.socratic_agent.socratic_prompts import \
-        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        socratic_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from src.agents.utils.types import InvokeAgentResponseType
     
 from langgraph.graph import StateGraph, START, END
@@ -24,6 +24,8 @@ This agent is designed to:
 - [conv_pref_prompt]        analyse the conversation style of the student 
 - [socratic_role_prompt]    follow a Socratic Method in the conversation that never releases the answer to the user  
 """
+
+# TODO: return/uncomment improved conversational style use & analysis
 
 ValidMessageTypes: TypeAlias = SystemMessage | HumanMessage | AIMessage
 AllMessageTypes: TypeAlias = ValidMessageTypes | RemoveMessage
@@ -70,9 +72,9 @@ class SocraticAgent:
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
-            system_message += f"## Summary of conversation earlier: {summary} \n\n"
-        if conversationalStyle:
-            system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
+            system_message += summary_system_prompt.format(summary=summary)
+        # if conversationalStyle:
+        #     system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
         messages = [SystemMessage(content=system_message)] + state['messages']
 
@@ -99,7 +101,7 @@ class SocraticAgent:
 
         summary = state.get("summary", "")
         previous_summary = config["configurable"].get("summary", "")
-        previous_conversationalStyle = config["configurable"].get("conversational_style", "")
+        # previous_conversationalStyle = config["configurable"].get("conversational_style", "")
         if previous_summary:
             summary = previous_summary
         
@@ -111,13 +113,13 @@ class SocraticAgent:
         else:
             summary_message = self.summary_prompt
         
-        if previous_conversationalStyle:
-            conversationalStyle_message = (
-                f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
-                self.update_conversation_preference_prompt
-            )
-        else:
-            conversationalStyle_message = self.conversation_preference_prompt
+        # if previous_conversationalStyle:
+        #     conversationalStyle_message = (
+        #         f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
+        #         self.update_conversation_preference_prompt
+        #     )
+        # else:
+        #     conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
         messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
@@ -125,14 +127,15 @@ class SocraticAgent:
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
-        valid_messages = self.check_for_valid_messages(messages)
-        conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
+        # messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
+        # valid_messages = self.check_for_valid_messages(messages)
+        # conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
         # Delete messages that are no longer wanted, except the last ones
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
-        return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
+        # return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
+        return {"summary": summary_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
         """
@@ -181,7 +184,7 @@ def invoke_socratic_agent(query: str, conversation_history: list, summary: str, 
     print(f'in invoke_socratic_agent(), query = {query}, thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
-    response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    response_events = agent.app.invoke({"messages": conversation_history, "summary": summary, "conversational_style": conversationalStyle}, config=config, stream_mode="values") #updates
     pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
     # Gather Metadata from the agent

@@ -1,12 +1,12 @@
 try:
     from ..llm_factory import OpenAILLMs
     from .base_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import OpenAILLMs
     from src.agents.base_agent.base_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from src.agents.utils.types import InvokeAgentResponseType
 
 from langgraph.graph import StateGraph, START, END
@@ -70,7 +70,7 @@ class BaseAgent:
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
-            system_message += f"## Summary of conversation earlier: {summary} \n\n"
+            system_message += summary_system_prompt.format(summary=summary)
         if conversationalStyle:
             system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
@@ -185,7 +185,7 @@ def invoke_base_agent(query: str, conversation_history: list, summary: str, conv
     print(f'in invoke_base_agent(), query = {query}, thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
-    response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    response_events = agent.app.invoke({"messages": conversation_history, "summary": summary, "conversational_style": conversationalStyle}, config=config, stream_mode="values") #updates
     pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
     # Gather Metadata from the agent
