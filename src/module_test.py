@@ -27,15 +27,15 @@ class TestChatModuleFunction(unittest.TestCase):
 
     def test_missing_parameters(self):
         # Checking state for missing parameters on default agent
-        response, params = "Hello, World", Params()
-        expected_params = Params(include_test_data=True, conversation_history=[], \
+        response = "Hello, World"
+        expected_params = Params(include_test_data=True, conversation_history=[{ "type": "user", "content": response }], \
                                     summary="", conversational_style="", \
                                     question_response_details={}, conversation_id="1234Test")
 
         for p in expected_params:
             params = expected_params.copy()
             # except for the special parameters
-            if p not in ["include_test_data", "conversation_id"]:
+            if p not in ["include_test_data", "conversation_id", "conversation_history"]:
                 params.pop(p)
 
                 result = chat_module(response, params)
@@ -58,20 +58,42 @@ class TestChatModuleFunction(unittest.TestCase):
 
                 self.assertTrue("Internal Error" in str(cm.exception))
                 self.assertTrue("conversation id" in str(cm.exception))
+            elif p == "conversation_history":
+                params.pop(p)
+
+                with self.assertRaises(Exception) as cm:
+                    chat_module(response, params)
+
+                self.assertTrue("Internal Error" in str(cm.exception))
+                self.assertTrue("conversation history" in str(cm.exception))
 
     def test_all_agents_output(self):
         # Checking the output of the agents
         agents = ["informational", "socratic"]
         for agent in agents:
-            response, params = "Hello, World", Params(conversation_id="1234Test", agent_type=agent)
+            response = "Hello, World"
+            params = Params(conversation_id="1234Test", agent_type=agent, conversation_history=[{ "type": "user", "content": response }])
 
             result = chat_module(response, params)
 
             self.assertIsNotNone(result.get("chatbot_response"))
-    
+
+    def test_unknown_agent_type(self):
+        agents = ["unknown"]
+        for agent in agents:
+            response = "Hello, World"
+            params = Params(conversation_id="1234Test", agent_type=agent, conversation_history=[{ "type": "user", "content": response }])
+
+            with self.assertRaises(Exception) as cm:
+                chat_module(response, params)
+
+            self.assertTrue("Input Parameter Error:" in str(cm.exception))
+            self.assertTrue("Agent Type" in str(cm.exception))
+
     def test_processing_time_calc(self):
         # Checking the processing time calculation
-        response, params = "Hello, World", Params(include_test_data=True, conversation_id="1234Test")
+        response = "Hello, World"
+        params = Params(include_test_data=True, conversation_id="1234Test", conversation_history=[{ "type": "user", "content": response }])
 
         result = chat_module(response, params)
 

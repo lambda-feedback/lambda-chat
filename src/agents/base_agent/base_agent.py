@@ -144,6 +144,8 @@ class BaseAgent:
         messages = state["messages"]
         valid_messages = self.check_for_valid_messages(messages)
         nr_messages = len(valid_messages)
+        if len(valid_messages) == 0:
+            raise Exception("Internal Error: No valid messages found in the conversation history. Conversation history might be empty.")
         if "system" in valid_messages[-1].type:
             nr_messages -= 1
 
