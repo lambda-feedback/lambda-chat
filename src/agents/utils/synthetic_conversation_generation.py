@@ -105,7 +105,7 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
 if __name__ == "__main__":
   num_turns = 6
   # Can be "informational", "socratic", "google_learnlm"
-  tutor_agent_types   = ["google_learnlm"]                           
+  tutor_agent_types   = ["socratic"]                           
   # Can be "base", "curious", "contradicting", "reliant", "confused", "unrelated"
   student_agent_types = ["base", "curious", "contradicting", "reliant", "confused", "unrelated"]  
 
@@ -127,6 +127,7 @@ if __name__ == "__main__":
       
         for student_agent_type in student_agent_types:
           for question in questions:
+            print(f"Generating synthetic conversation for {question} with tutor: {tutor_agent_type} and student: {student_agent_type}")
             with open(question, "r") as file:
               raw_text = file.read()
 
