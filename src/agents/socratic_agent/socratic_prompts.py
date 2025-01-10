@@ -86,17 +86,20 @@ update_conv_pref_prompt = f"""Based on the interaction above, analyse the studen
 {pref_guidelines}
 """
 
-summary_prompt = """
-You are an AI assistant specializing in concise and accurate summarization. Your task is to summarize the previous conversation, capturing the main topics, key points, user questions, and your responses in a clear and organized format. 
-
-Ensure the summary is:
+summary_guidelines = """Ensure the summary is:
 
 Concise: Keep the summary brief while including all essential information.
-Structured: Organize the summary into sections such as 'Topics Discussed,' 'Key Questions and Responses,' and 'Follow-Up Suggestions' if applicable.
+Structured: Organize the summary into sections such as 'Topics Discussed' and 'Top 3 Key Detailed Ideas'.
 Neutral and Accurate: Avoid adding interpretations or opinions; focus only on the content shared.
 When summarizing: If the conversation is technical, highlight significant concepts, solutions, and terminology. If context involves problem-solving, detail the problem and the steps or solutions provided. If the user asks for creative input, briefly describe the ideas presented.
+Last messages: Include the most recent 4 messages to provide context for the summary.
 
-Provide the summary in a bulleted format for clarity. Avoid redundant details while preserving the core intent of the discussion.
-"""
+Provide the summary in a bulleted format for clarity. Avoid redundant details while preserving the core intent of the discussion."""
 
-update_summary_prompt = "Update the summary by taking into account the new messages above:"
+summary_prompt = f"""Summarize the conversation between a student and a tutor. Your summary should highlight the major topics discussed during the session, followed by a detailed recollection of the last five significant points or ideas. Ensure the summary flows smoothly to maintain the continuity of the discussion."""
+
+update_summary_prompt = f"""Update the summary by taking into account the new messages above.
+
+{summary_guidelines}"""
+
+summary_system_prompt = "You are continuing a tutoring session with the student. Background context: {summary}. Use this context to inform your understanding but do not explicitly restate, refer to, or incorporate the details directly in your responses unless the user brings them up. Respond naturally to the user's current input, assuming prior knowledge from the summary."

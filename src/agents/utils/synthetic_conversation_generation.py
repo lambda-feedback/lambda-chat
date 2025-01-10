@@ -127,6 +127,7 @@ if __name__ == "__main__":
       
         for student_agent_type in student_agent_types:
           for question in questions:
+            print(f"Generating synthetic conversation for {question} with tutor: {tutor_agent_type} and student: {student_agent_type}")
             with open(question, "r") as file:
               raw_text = file.read()
 

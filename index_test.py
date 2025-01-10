@@ -31,7 +31,7 @@ class TestChatIndexFunction(unittest.TestCase):
         for arg in arguments:
             event = {
                 "message": "Hello, World",
-                "params": {"conversation_id": "1234Test"}
+                "params": {"conversation_id": "1234Test", "conversation_history": [{"type": "user", "content": "Hello, World"}]}
             }
             event.pop(arg)
 
@@ -42,7 +42,7 @@ class TestChatIndexFunction(unittest.TestCase):
     def test_correct_arguments(self):
         event = {
             "message": "Hello, World",
-            "params": {"conversation_id": "1234Test"}
+            "params": {"conversation_id": "1234Test", "conversation_history": [{"type": "user", "content": "Hello, World"}]}
         }
 
         result = handler(event, None)
@@ -52,7 +52,7 @@ class TestChatIndexFunction(unittest.TestCase):
     def test_correct_response(self):
         event = {
             "message": "Hello, World",
-            "params": {"conversation_id": "1234Test"}
+            "params": {"conversation_id": "1234Test", "conversation_history": [{"type": "user", "content": "Hello, World"}]}
         }
 
         result = handler(event, None)

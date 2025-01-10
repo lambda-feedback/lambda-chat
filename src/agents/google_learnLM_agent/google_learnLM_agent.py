@@ -1,12 +1,12 @@
 try:
     from ..llm_factory import GoogleAILLMs
     from .google_learnLM_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
     from src.agents.llm_factory import GoogleAILLMs
     from src.agents.google_learnLM_agent.google_learnLM_prompts import \
-        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
+        role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from src.agents.utils.types import InvokeAgentResponseType
 
 from langgraph.graph import StateGraph, START, END
@@ -74,7 +74,7 @@ class GoogleLearnLMAgent:
         summary = state.get("summary", "")
         conversationalStyle = state.get("conversationalStyle", "")
         if summary:
-            system_message += f"## Summary of conversation earlier: {summary} \n\n"
+            system_message += summary_system_prompt.format(summary=summary)
         if conversationalStyle:
             system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
@@ -148,6 +148,8 @@ class GoogleLearnLMAgent:
         messages = state["messages"]
         valid_messages = self.check_for_valid_messages(messages)
         nr_messages = len(valid_messages)
+        if len(valid_messages) == 0:
+            raise Exception("Internal Error: No valid messages found in the conversation history. Conversation history might be empty.")
         if "system" in valid_messages[-1].type:
             nr_messages -= 1
 
@@ -189,7 +191,7 @@ def invoke_google_learnlm_agent(query: str, conversation_history: list, summary:
     print(f'in invoke_google_learnlm_agent(), query = {query}, thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
-    response_events = agent.app.invoke({"messages": conversation_history + [HumanMessage(content=query)]}, config=config, stream_mode="values") #updates
+    response_events = agent.app.invoke({"messages": conversation_history, "summary": summary, "conversational_style": conversationalStyle}, config=config, stream_mode="values") #updates
     pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
     # Gather Metadata from the agent
