@@ -81,9 +81,9 @@ You can run the Python function itself. Make sure to have a main function in eit
 python src/module.py
 ```
 
-You can also use the `test_prompts.py` script to test the agents with example inputs from Lambda Feedback questions and synthetic conversations.
+You can also use the `testbench_agents.py` script to test the agents with example inputs from Lambda Feedback questions and synthetic conversations.
 ```bash
-python src/agents/utils/test_prompts.py
+python src/agents/utils/testbench_agents.py
 ```
 
 ### Building the Docker Image
