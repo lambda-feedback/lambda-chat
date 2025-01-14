@@ -99,9 +99,11 @@ class QuestionDetails:
 
 # questionAccessInformation type
 class CurrentPart:
-    def __init__(self, id: str = None, position: int = None):
+    def __init__(self, id: str = None, position: int = None, timeTakenPart: Optional[str] = None, markedDonePart: Optional[str] = None):
         self.id = id
         self.position = position
+        timeTakenPart = timeTakenPart
+        markedDonePart = markedDonePart
 
 class QuestionAccessInformation:
     def __init__(
@@ -156,7 +158,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         (Secret) Expected Answer: {responseArea.answer};
         {submissionDetails}"""
 
-    def format_part_details(part: PartDetails, currentPartId: str, summary: List[StudentWorkResponseArea]) -> str:
+    def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
         if not part or not part.publishedResponseAreas:
             return ''
 
@@ -175,7 +177,8 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         )
 
         return f"""
-    # {'[CURRENTLY WORKING ON] ' if currentPartId == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
+    # {'[CURRENTLY WORKING ON] ' if currentPart.id == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
+    Time spent on this part: {getattr(currentPart, 'timeTakenPart', 'No recorded duration')}
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
     {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer'}
@@ -189,14 +192,14 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};
     Description of Question: {questionInformation.questionContent};
     Expected Time to Complete the Question: {f'{questionInformation.durationLowerBound} - {questionInformation.durationUpperBound} min;' if questionInformation.durationLowerBound and questionInformation.durationUpperBound else 'No specified duration.'}
-    Time Spent on the Question This Session: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'since {questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''}}; 
+    Time Spent on the Question today: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''} {f'{questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else ''}; 
     """
 
     partsDetails = "\n".join(
         [
             format_part_details(
                 part,
-                questionAccessInformation.currentPart.id,
+                questionAccessInformation.currentPart,
                 questionSubmissionSummary
             ) for part in questionInformation.parts
         ]
