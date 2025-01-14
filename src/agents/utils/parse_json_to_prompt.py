@@ -102,8 +102,8 @@ class CurrentPart:
     def __init__(self, id: str = None, position: int = None, timeTakenPart: Optional[str] = None, markedDonePart: Optional[str] = None):
         self.id = id
         self.position = position
-        timeTakenPart = timeTakenPart
-        markedDonePart = markedDonePart
+        self.timeTakenPart = timeTakenPart
+        self.markedDonePart = markedDonePart
 
 class QuestionAccessInformation:
     def __init__(
@@ -175,10 +175,9 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
                 ]
             ) if part.publishedWorkedSolutionSections else f"No worked solutions for part ({convert_index_to_lowercase_letter(part.publishedPartPosition)});"
         )
-
         return f"""
     # {'[CURRENTLY WORKING ON] ' if currentPart.id == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
-    Time spent on this part: {getattr(currentPart, 'timeTakenPart', 'No recorded duration')}
+    {f"Time spent on this part: {currentPart.timeTakenPart if currentPart.timeTakenPart is not None else 'No recorded duration'}" if currentPart.id == part.publishedPartId else ''}
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
     {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer'}
