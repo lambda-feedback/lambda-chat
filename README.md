@@ -1,4 +1,4 @@
-# Python Evaluation Function
+# Lambda Feedback Chatbot
 
 This repository contains the code needed to run a modular chat functionality that provides multiple chatbot API endpoints [written in Python].
 
