@@ -8,8 +8,8 @@ def handler(event, context):
     """
     Lambda handler function
     """
-    # Log the input event TODO: remove this line
-    print("Received event:", json.dumps(event, indent=2))
+    # Log the input event for debugging purposes
+    # print("Received event:", json.dumps(event, indent=2))
 
     if "message" not in event:
         return {
