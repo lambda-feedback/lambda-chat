@@ -110,7 +110,8 @@ jobs:
       - name: Approve Production Deployment
         uses: trstringer/manual-approval@v1
         with:
-          approvers: approvers
+          approvers: neagualexa
+          # approvers: approvers
           minimum-approvals: 1
           timeout-minutes: 10
           secret: ${{ steps.generate_token.outputs.token }}
