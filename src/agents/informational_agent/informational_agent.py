@@ -37,7 +37,7 @@ class State(TypedDict):
 
 class InformationalAgent:
     def __init__(self):
-        llm = OpenAILLMs()
+        llm = OpenAILLMs(temperature=0.25)
         self.llm = llm.get_llm()
         summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
@@ -66,7 +66,7 @@ class InformationalAgent:
         # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
         if question_response_details:
-            system_message += f"## Known Question Materials: {question_response_details} \n\n"
+            system_message += f"## Known Learning Materials: {question_response_details} \n\n"
 
         # Adding summary and conversational style to the system message
         summary = state.get("summary", "")
