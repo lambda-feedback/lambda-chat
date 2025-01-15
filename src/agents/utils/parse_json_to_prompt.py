@@ -140,17 +140,17 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     def format_response_area_details(responseArea: ResponseAreaDetails, studentSummary: List[StudentWorkResponseArea]) -> str:
         submissionDetails = "\n".join(
             [
-                f"My Latest Submission: {ra.latestSubmission.submission};\n"
-                f"My Latest Feedback Received: {ra.latestSubmission.feedback};\n"
-                f"Total Submissions: {ra.totalSubmissions};\n"
-                f"Total Wrong Submissions: {ra.totalWrongSubmissions};\n"
+                f"Latest Response: {ra.latestSubmission.submission};\n"
+                f"Latest Feedback Received: {ra.latestSubmission.feedback};\n"
+                f"Total Responses: {ra.totalSubmissions};\n"
+                f"Total Wrong Responses: {ra.totalWrongSubmissions};\n"
                 for ra in studentSummary
                 if ra.publishedResponseAreaId == responseArea.id and ra.latestSubmission
             ]
         )
 
         if not submissionDetails:
-            submissionDetails = 'My Latest Submission: none made;'
+            submissionDetails = 'Latest Response: none made;'
 
         return f"""
         ## Response Area: {responseArea.position + 1}
@@ -184,7 +184,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     {workedSolutions}
 """
 
-    questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my submissions for each response area, and feedback on my progress. This information highlights my efforts and progress so far. 
+    questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
     Maths equations are in KaTex format, preserve them the same.
 
 # Question: {questionInformation.questionTitle};
