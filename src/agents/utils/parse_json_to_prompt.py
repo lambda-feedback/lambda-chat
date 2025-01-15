@@ -99,9 +99,11 @@ class QuestionDetails:
 
 # questionAccessInformation type
 class CurrentPart:
-    def __init__(self, id: str = None, position: int = None):
+    def __init__(self, id: str = None, position: int = None, timeTakenPart: Optional[str] = None, markedDonePart: Optional[str] = None):
         self.id = id
         self.position = position
+        self.timeTakenPart = timeTakenPart
+        self.markedDonePart = markedDonePart
 
 class QuestionAccessInformation:
     def __init__(
@@ -138,17 +140,17 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     def format_response_area_details(responseArea: ResponseAreaDetails, studentSummary: List[StudentWorkResponseArea]) -> str:
         submissionDetails = "\n".join(
             [
-                f"My Latest Submission: {ra.latestSubmission.submission};\n"
-                f"My Latest Feedback Received: {ra.latestSubmission.feedback};\n"
-                f"Total Submissions: {ra.totalSubmissions};\n"
-                f"Total Wrong Submissions: {ra.totalWrongSubmissions};\n"
+                f"Latest Response: {ra.latestSubmission.submission};\n"
+                f"Latest Feedback Received: {ra.latestSubmission.feedback};\n"
+                f"Total Responses: {ra.totalSubmissions};\n"
+                f"Total Wrong Responses: {ra.totalWrongSubmissions};\n"
                 for ra in studentSummary
                 if ra.publishedResponseAreaId == responseArea.id and ra.latestSubmission
             ]
         )
 
         if not submissionDetails:
-            submissionDetails = 'My Latest Submission: none made;'
+            submissionDetails = 'Latest Response: none made;'
 
         return f"""
         ## Response Area: {responseArea.position + 1}
@@ -156,7 +158,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         (Secret) Expected Answer: {responseArea.answer};
         {submissionDetails}"""
 
-    def format_part_details(part: PartDetails, currentPartId: str, summary: List[StudentWorkResponseArea]) -> str:
+    def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
         if not part or not part.publishedResponseAreas:
             return ''
 
@@ -173,30 +175,30 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
                 ]
             ) if part.publishedWorkedSolutionSections else f"No worked solutions for part ({convert_index_to_lowercase_letter(part.publishedPartPosition)});"
         )
-
         return f"""
-    # {'[CURRENTLY WORKING ON] ' if currentPartId == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
+    # {'[CURRENTLY WORKING ON] ' if currentPart.id == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
+    {f"Time spent on this part: {currentPart.timeTakenPart if currentPart.timeTakenPart is not None else 'No recorded duration'}" if currentPart.id == part.publishedPartId else ''}
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
     {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer'}
     {workedSolutions}
 """
 
-    questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my submissions for each response area, and feedback on my progress. This information highlights my efforts and progress so far. 
+    questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
     Maths equations are in KaTex format, preserve them the same.
 
 # Question: {questionInformation.questionTitle};
     Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};
     Description of Question: {questionInformation.questionContent};
     Expected Time to Complete the Question: {f'{questionInformation.durationLowerBound} - {questionInformation.durationUpperBound} min;' if questionInformation.durationLowerBound and questionInformation.durationUpperBound else 'No specified duration.'}
-    Time Spent on the Question This Session: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'since {questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''}}; 
+    Time Spent on the Question today: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''} {f'{questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else ''}; 
     """
 
     partsDetails = "\n".join(
         [
             format_part_details(
                 part,
-                questionAccessInformation.currentPart.id,
+                questionAccessInformation.currentPart,
                 questionSubmissionSummary
             ) for part in questionInformation.parts
         ]

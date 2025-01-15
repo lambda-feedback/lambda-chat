@@ -81,9 +81,9 @@ You can run the Python function itself. Make sure to have a main function in eit
 python src/module.py
 ```
 
-You can also use the `test_prompts.py` script to test the agents with example inputs from Lambda Feedback questions and synthetic conversations.
+You can also use the `testbench_agents.py` script to test the agents with example inputs from Lambda Feedback questions and synthetic conversations.
 ```bash
-python src/agents/utils/test_prompts.py
+python src/agents/utils/testbench_agents.py
 ```
 
 ### Building the Docker Image
@@ -113,7 +113,7 @@ docker run --env-file .env -it --name my-lambda-container -p 8080:8080 llm_chat
 This will start the evaluation function and expose it on port `8080` and it will be open to be curl:
 
 ```bash
-curl --location 'http://localhost:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data '{"message":"hi","params":{"conversation_id":"12345Test"}}'
+curl --location 'http://localhost:8080/2015-03-31/functions/function/invocations' --header 'Content-Type: application/json' --data '{"message":"hi","params":{"conversation_id":"12345Test","conversation_history": [{"type":"user","content":"hi"}]}}'
 ```
 
 ### Call Docker Container From Postman
@@ -130,7 +130,8 @@ Body:
 {
     "message":"hi",
     "params":{
-        "conversation_id":"12345Test"
+        "conversation_id":"12345Test",
+        "conversation_history": [{"type":"user","content":"hi"}]
     }
 }
 ```
@@ -141,11 +142,12 @@ Body with optional Params:
     "message":"hi",
     "params":{
         "conversation_id":"12345Test",
-        "conversation_history":[" "],
+        "conversation_history":[{"type":"user","content":"hi"}],
         "summary":" ",
         "conversational_style":" ",
         "question_response_details": "",
-        "include_test_data": true
+        "include_test_data": true,
+        "agent_type": {agent_name}
     }
 }
 ```

@@ -2,7 +2,7 @@ name: Dev deployment of chatbot lambda function
 
 on:
   push:
-    branches-ignore: [main]
+    branches: [dev]
 
 jobs:
   test:
