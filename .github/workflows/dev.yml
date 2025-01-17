@@ -57,43 +57,25 @@ jobs:
           path: ./reports/pytest.xml
           if-no-files-found: warn
 
-  deploy:
-    name: Deploy to AWS Lambda
-    runs-on: ubuntu-latest
+  build:
+    name: Build Docker Image
+    uses: lambda-feedback/chat-function-workflows/.github/workflows/gh_build.yml@main
     needs: test
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          # Created the Secrets Under the Repo only with These Variables
-          aws-access-key-id: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_ID }}
-          aws-secret-access-key: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_SECRET }}
-          aws-region: eu-west-2
-
-      - name: Login to Amazon ECR
-        id: login-pf-aws-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build and push the tagged docker image to Amazon ECR
-        id: build-custom-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
-          ECR_REPOSITORY: lambda-feedback-dev-chat
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Update aws custom lambda function code
-        env:
-          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
-          ECR_REPOSITORY: lambda-feedback-dev-chat
-          IMAGE_TAG: latest
-          FUNCTION_NAME: lambda-feedback-dev-chat
-        run: |
-          aws lambda update-function-code \
-              --function-name $FUNCTION_NAME \
-              --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  deploy:
+    name: Deploy to Lambda Feedback
+    uses: lambda-feedback/chat-function-workflows/.github/workflows/dev_deploy.yml@main
+    needs: test
+    with:
+      template-repository-name: "lambda-feedback/chat-function-boilerplate"
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    secrets:
+      aws-access-key-id: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_ID }}
+      aws-secret-key: ${{ secrets.LAMBDA_CONTAINER_PIPELINE_AWS_SECRET}}
