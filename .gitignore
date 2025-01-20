@@ -132,7 +132,6 @@ dmypy.json
 .vscode
 
 .DS_Store
-evaluation_function/db_analytics
 
 # Synthetic data conversations
 src/agents/utils/synthetic_conversations/*.json
