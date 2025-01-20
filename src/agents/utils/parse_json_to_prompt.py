@@ -159,7 +159,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         {submissionDetails}"""
 
     def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
-        if not part or not part.publishedResponseAreas:
+        if not part:
             return ''
 
         responseAreas = "\n".join(

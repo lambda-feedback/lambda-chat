@@ -1,0 +1,151 @@
+{
+  "message": "what should i do for this part?",
+  "params": {
+    "include_test_data": true,
+    "conversation_history": [
+      { "type": "user", "content": "what should i do for this part?" }
+    ],
+    "summary": "",
+    "conversational_style": "",
+    "question_response_details": {
+      "questionSubmissionSummary": [
+        {
+          "publishedPartId": "37a703f7-cd61-4f63-aed2-17f83451b5c5",
+          "publishedPartPosition": 2,
+          "publishedResponseAreaId": "63dd1aee-5724-4cf3-8dcd-4b0ca7953c2a",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "cc912f18-33fb-4612-a024-492f01443c6f",
+          "publishedResponseAreaPreResponseText": "\\(\\tau_{\\mathrm{tw}}=\\)",
+          "publishedResponseType": "NUMBER",
+          "publishedResponseConfig": null,
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        },
+        {
+          "publishedPartId": "f63ee543-c338-49a9-b07c-14789966d08f",
+          "publishedPartPosition": 3,
+          "publishedResponseAreaId": "3ba5a1eb-22cc-4599-a0e6-35e892c173c5",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "776c0c03-cc7a-4e9c-b008-5ce8cc07ca4b",
+          "publishedResponseAreaPreResponseText": "\\(\\tau_{\\mathrm{bw}} = \\)",
+          "publishedResponseType": "NUMBER",
+          "publishedResponseConfig": null,
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        }
+      ],
+      "questionInformation": {
+        "questionTitle": "Flow between two parallel plates",
+        "questionGuidance": "What is the shear stress on a flat plate? This problem will help you answer this question that you will find often in many engineering problems.",
+        "questionContent": "Consider the flow between two infinite parallel plates, separated by a distance $h$ with the top one moving from left to right with constant speed $U_0$. Consider the flow to be Newtonian, incompressible, with uniform dynamic viscosity. As schematically shown in the figure below, the velocity field with respect to a Cartesian frame of reference is $\\vec{u}=\\left[U_0y/h~~0~~0\\right]^{T}$, with the $x$-axis oriented from left to right.\n\n![](https://lambda-feedback-dev-frontend-client-bucket.s3.amazonaws.com/77c9b9d3-e6cb-43a7-85c6-6464c6af3700/9f649438-a9d8-4460-a9fb-55ef36422cf3.png).&#x20;\n\nGiven $U_0=10$ m/s, $h=10$ mm and $\\mu=1\\times 10^{-3}$ $\\mathrm{kg/(ms)}$,&#x20;\n",
+        "durationLowerBound": 15,
+        "durationUpperBound": 25,
+        "parts": [
+          {
+            "publishedPartId": "8e35723d-e549-4dbd-97ca-29c1134ceb69",
+            "publishedPartPosition": 0,
+            "publishedPartContent": "Compute the deformation tensor at any location in the flow field.\n",
+            "publishedPartAnswerContent": "$$\n\\underline{\\underline{D}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ 500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n\n",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "deec8cb8-7441-46e9-8435-e0af7b8d9cf8",
+                "position": 0,
+                "title": null,
+                "content": "The deformation tensor for such a flow is:\n\n***\n\n$$\n\\underline{\\underline{D}}= \\frac{1}{2}(\\underline{\\underline{J}}+\\underline{\\underline{J}}^T)=\\begin{bmatrix} 0 & U_0/(2h) & 0 \\\\ U_0/(2h) & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix}.\n$$\n\n***\n\nThe deformation tensor is uniform and the only non-zero component is $D_{xy}=D_{yx}=500~\\mathrm{s^{\\scriptsize. -1}}$. Hence:\n\n***\n\n$$\n\\underline{\\underline{D}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ 500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n"
+              }
+            ],
+            "publishedResponseAreas": []
+          },
+          {
+            "publishedPartId": "cdef8c4e-c929-4655-a190-1ace4824dd6a",
+            "publishedPartPosition": 1,
+            "publishedPartContent": "Compute the spin tensor at any location in the flow field.\n",
+            "publishedPartAnswerContent": "$$\n\\underline{\\underline{\\Omega}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ -500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n\nSee worked solutions for an explanation.\n",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "8cbb1d33-9c15-4969-99c0-87859a761fac",
+                "position": 0,
+                "title": null,
+                "content": "The spin tensor for such a flow is:\n\n***\n\n$$\n\\underline{\\underline{\\Omega}}=\\frac{1}{2}\\left(\\underline{\\underline{J}}-\\underline{\\underline{J}}^T\\right)=\\begin{bmatrix}0 & U_0/(2h) & 0\\\\-U_0/(2h)&0&0\\\\0&0&0\\end{bmatrix}.\n$$\n\n***\n\nAgain, also the spin tensor is uniform all over the flow and the only non-zero component is $\\Omega_{xy}=-\\Omega_{yx}=500 \\mathrm{s}^{-1}$. This means that any infinitesimal fluid particle spins and stretches at the same time. This is also illustrated below:\n\n***\n\n![](https://lambda-feedback-dev-frontend-client-bucket.s3.amazonaws.com/77c9b9d3-e6cb-43a7-85c6-6464c6af3700/51e0490a-79d3-483b-a9f2-7816066f0963.png)\n"
+              }
+            ],
+            "publishedResponseAreas": []
+          },
+          {
+            "publishedPartId": "37a703f7-cd61-4f63-aed2-17f83451b5c5",
+            "publishedPartPosition": 2,
+            "publishedPartContent": "Compute the shear stress on the top plate.\n",
+            "publishedPartAnswerContent": "$$\n\\boxed{\\tau_\\mathrm{tw}=-1 \\mathrm{Pa}}\n$$",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "d8b68bfc-0d70-4f9b-89bf-81796da1b392",
+                "position": 0,
+                "title": null,
+                "content": "This question uses the same geometry as Q9.4. However, the origin here is located at the bottom plate; the boundary condition at the top plate is different; and we are given information about the shear stress tensor, $\\underline{\\underline{\\tau}}$: for a Newtonian fluid and an incompressible flow, $\\underline{\\underline{\\tau}}=2\\mu\\underline{\\underline{D}}$. (Note that $\\underline{\\underline{\\sigma}}=\\underline{\\underline{\\tau}}-p\\underline{\\underline{I}}$).\n\n&#x20;&#x20;\n\n***\n\nFollowing the solution to Q9.4 (neglecting the $z-$ direction), the force per unit area exerted by the top plate *on the fluid* is\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\underline{\\underline{\\sigma}}\\hat{n}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=h}\\begin{bmatrix} n_x\\\\ n_y\\end{bmatrix}_{ y=h}\n$$\n\n***\n\nNoting that $n_x=0$,\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=h}\\begin{bmatrix} 0\\\\ 1\\end{bmatrix}_{ y=h}\n$$\n\n\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\begin{bmatrix} \\sigma_{xy}\\\\\\sigma_{yy} \\end{bmatrix}_{ y=h}=\\begin{bmatrix} \\tau_{xy}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} 2\\mu{}D_{xy}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} \\mu{}\\frac{\\partial{}u}{\\partial{}y}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} \\mu{}U_0/h\\\\-p \\end{bmatrix}_{y=h}.\n$$\n\n***\n\n&#x20;&#x20;\n\nThe shearing component of the stress is the first component ($x-$direction). The shear stress on the fluid is therefore\n\n***\n\n$$\n\\mathcal{T}_{x}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}\\ = \\mu{}U_0/h = 10^{-3}\\ast{}10/10^{-2} = 1\\:\\mathrm{Pa}.\n$$\n\n&#x20;&#x20;\n\n***\n\nNote that the viscous stress tensor in this specific flow is constant everywhere (i.e. $\\tau_{xy}$ does not depend on space in this specific flow). The stress on the plate is equal and opposite to the stress on the fluid,&#x20;\n\n***\n\n$$\n\\boxed{ \\tau_{tw} = -\\mathcal{T}_{x}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)} =\\mathcal{T}_{x}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)} = -1 \\:\\mathrm{Pa}. }\n$$\n\n***\n\n&#x20;&#x20;\n\nThe force on the plate due to $\\tau_{tw}$ opposes the motion of the plate. In fact, it is necessary to apply a force on the plate from left to right to keep the plate moving with constant velocity $U_0$ (note that if the plate moves with constant velocity, the sum of the forces on the plate has to be the null vector).\n\n&#x20;&#x20;\n\n***\n\nThe approach to the solution shown here takes advantage of the work already done in Q9.4. The benefit is that the signs of each term were already carefully accounted for. An alternative approach would have been to start from first principles. Given that only the stress is required (not the force) we would not need to include the area and would not need to start with an integral. We could look at the geometry and conclude that $\\tau_{xy}$ is the component of the stress that we require. If you took this approach, be careful to be rigorous about how you derive the sign of the stress on the plate.\n"
+              }
+            ],
+            "publishedResponseAreas": [
+              {
+                "id": "63dd1aee-5724-4cf3-8dcd-4b0ca7953c2a",
+                "position": 0,
+                "universalResponseAreaId": "cc912f18-33fb-4612-a024-492f01443c6f",
+                "preResponseText": "\\(\\tau_{\\mathrm{tw}}=\\)",
+                "Response": {
+                  "id": "a1ddb6fa-25be-4045-bdea-e995848bd508",
+                  "responseType": "NUMBER",
+                  "config": null,
+                  "answer": -1
+                },
+                "responseType": "NUMBER",
+                "answer": -1
+              }
+            ]
+          },
+          {
+            "publishedPartId": "f63ee543-c338-49a9-b07c-14789966d08f",
+            "publishedPartPosition": 3,
+            "publishedPartContent": "Compute the shear stress on the bottom plate.\n",
+            "publishedPartAnswerContent": "$$\n\\boxed{\\tau_\\mathrm{bw} = 1 \\mathrm{Pa}}\n$$",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "6900ae4e-1562-4730-bc26-149db92ee449",
+                "position": 0,
+                "title": null,
+                "content": "On the bottom plate the velocity gradient and therefore the shear stress are the same as on the top plate. However, the bottom plate is oriented in the opposite direction to the top plate. Following the same approach as part (c), the force per unit area exerted by the *bottom* plate *on the fluid* is\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=0}\\begin{bmatrix} 0\\\\ -1\\end{bmatrix}_{ y=0}\n$$\n\nhence\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}=\\begin{bmatrix} -\\sigma_{xy}\\\\-\\sigma_{yy} \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\tau_{xy}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -2\\mu{}D_{xy}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\mu{}\\frac{\\partial{}u}{\\partial{}y}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\mu{}U_0/h\\\\ p \\end{bmatrix}_{y=0}.\n$$\n\n***\n\nThe stress on the fluid is the force per unit area; and the shearing component of the stress is the first component ($x-$direction). Given the orientation of the bottom plate, the shear stress exerted on the fluid by the bottom plate is\n\n***\n\n$$\n\\mathcal{T}_{x}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}\\ = -\\mu{}U_0/h = -10^{-3}\\ast{}10/10^{-2} = -1\\:\\mathrm{Pa}.\n$$\n\n***\n\n&#x20;&#x20;\n\nThe stress on the plate is equal and opposite to the stress on the fluid,\n\n***\n\n$$\n\\boxed{ \\tau_{bw} = 1 \\:\\mathrm{Pa}. }\n$$\n"
+              }
+            ],
+            "publishedResponseAreas": [
+              {
+                "id": "3ba5a1eb-22cc-4599-a0e6-35e892c173c5",
+                "position": 0,
+                "universalResponseAreaId": "776c0c03-cc7a-4e9c-b008-5ce8cc07ca4b",
+                "preResponseText": "\\(\\tau_{\\mathrm{bw}} = \\)",
+                "Response": {
+                  "id": "6aff9851-4d28-4d16-855d-a1c3e81319a9",
+                  "responseType": "NUMBER",
+                  "config": null,
+                  "answer": 1
+                },
+                "responseType": "NUMBER",
+                "answer": 1
+              }
+            ]
+          }
+        ]
+      },
+      "questionAccessInformation": {
+        "estimatedMinimumTime": "15 minutes",
+        "estimaredMaximumTime": "25 minutes",
+        "timeTaken": "less than one minute",
+        "accessStatus": "too little time spent on this question.",
+        "markedDone": "",
+        "currentPart": {
+          "id": "8e35723d-e549-4dbd-97ca-29c1134ceb69",
+          "position": 0
+        }
+      }
+    },
+    "conversation_id": "49f97c01-9a46-4773-9722-f8d231c55209",
+    "agent_type": "informational"
+  }
+}
