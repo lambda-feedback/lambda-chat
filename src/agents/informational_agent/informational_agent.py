@@ -101,7 +101,7 @@ class InformationalAgent:
 
         summary = state.get("summary", "")
         previous_summary = config["configurable"].get("summary", "")
-        # previous_conversationalStyle = config["configurable"].get("conversational_style", "")
+        previous_conversationalStyle = config["configurable"].get("conversational_style", "")
         if previous_summary:
             summary = previous_summary
         
@@ -113,13 +113,13 @@ class InformationalAgent:
         else:
             summary_message = self.summary_prompt
         
-        # if previous_conversationalStyle:
-        #     conversationalStyle_message = (
-        #         f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
-        #         self.update_conversation_preference_prompt
-        #     )
-        # else:
-        #     conversationalStyle_message = self.conversation_preference_prompt
+        if previous_conversationalStyle:
+            conversationalStyle_message = (
+                f"This is the previous conversational style of the student for this conversation: {previous_conversationalStyle}\n\n" +
+                self.update_conversation_preference_prompt
+            )
+        else:
+            conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
         messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
@@ -127,15 +127,15 @@ class InformationalAgent:
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        # messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
-        # valid_messages = self.check_for_valid_messages(messages)
-        # conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
+        messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
+        valid_messages = self.check_for_valid_messages(messages)
+        conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
         # Delete messages that are no longer wanted, except the last ones
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-5]]
 
-        # return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
-        return {"summary": summary_response.content, "messages": delete_messages}
+        return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
+        # return {"summary": summary_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
         """
