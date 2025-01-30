@@ -66,7 +66,7 @@ class InformationalAgent:
         # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
         if question_response_details:
-            system_message += f"## Known Learning Materials: {question_response_details} \n\n"
+            system_message += f"\n\n ## Known Learning Materials: {question_response_details} \n\n"
 
         # Adding summary and conversational style to the system message
         summary = state.get("summary", "")
