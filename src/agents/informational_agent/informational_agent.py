@@ -122,12 +122,12 @@ class InformationalAgent:
             conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
-        messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
+        messages = [SystemMessage(content=summary_message)] + state["messages"][:-1]
         valid_messages = self.check_for_valid_messages(messages)
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
+        messages = [SystemMessage(content=conversationalStyle_message)] + state["messages"][:-1]
         valid_messages = self.check_for_valid_messages(messages)
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
