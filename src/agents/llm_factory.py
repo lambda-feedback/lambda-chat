@@ -81,3 +81,15 @@ class GoogleAILLMs:
     
     def get_llm(self):
         return self._google_llm
+    
+class DeepSeekLLMs:
+    def __init__(self, temperature: int = 0):
+        self._deepseek_llm = ChatOpenAI(
+            model=os.environ['DEEPSEEK_MODEL'],
+            api_key=os.environ['DEEPSEEK_API_KEY'],
+            base_url='https://api.deepseek.com',
+            temperature=temperature,
+        )
+
+    def get_llm(self):
+        return self._deepseek_llm
