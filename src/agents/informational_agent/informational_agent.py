@@ -132,7 +132,7 @@ class InformationalAgent:
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
         # Delete messages that are no longer wanted, except the last ones
-        delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-5]]
+        delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
         return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
         # return {"summary": summary_response.content, "messages": delete_messages}

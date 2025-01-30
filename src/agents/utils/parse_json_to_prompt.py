@@ -185,7 +185,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
 """
 
     questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
-    Maths equations are in KaTex format, preserve them the same.
+    Maths equations are in KaTex format, preserve them the same. Use British English spellings.
 
 # Question: {questionInformation.questionTitle};
     Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};

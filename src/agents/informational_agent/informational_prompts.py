@@ -44,7 +44,7 @@ pref_guidelines = """**Guidelines:**
 - If no particular preference is detectable, state "No preference observed."
 """
 
-conv_pref_prompt = """You are an AI tutor analyzing a conversation to assess a student's emotional state, feedback preferences, learning style (using Bloom’s Taxonomy), and problem-solving recognition (using George Pólya’s four-step method).
+conv_pref_prompt = """Analyze the conversation to assess a student's emotional state, feedback preferences, learning style (using Bloom’s Taxonomy), and problem-solving recognition (using George Pólya’s four-step method).
 
 Instructions:
 
@@ -71,8 +71,8 @@ Reasoning: (Explain how the student’s responses indicate each category)
 Reasoning: (Explain how you determined each category based on the conversation)
 
 Example Conversation
-Student: "I keep getting stuck on this algebra problem. I don’t even know where to start. Can you help me break it down?"
-AI Response: "Of course! Let's start by understanding the problem. First, what do you already know about the equation? Try identifying the key parts—what are the variables, constants, and operations involved? That way, we can break it down step by step together."
+Human: "I keep getting stuck on this algebra problem. I don’t even know where to start. Can you help me break it down?"
+AI: "Of course! Let's start by understanding the problem. First, what do you already know about the equation? Try identifying the key parts—what are the variables, constants, and operations involved? That way, we can break it down step by step together."
 
 Example Output:
 Emotion: Frustrated (expresses difficulty and uncertainty)
