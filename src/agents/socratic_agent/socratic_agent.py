@@ -66,7 +66,7 @@ class SocraticAgent:
         # Adding external student progress and question context details from data queries
         question_response_details = config["configurable"].get("question_response_details", "")
         if question_response_details:
-            system_message += f"## Known Learning Materials: {question_response_details} \n\n"
+            system_message += f"\n\n ## Known Learning Materials: {question_response_details} \n\n"
 
         # Adding summary and conversational style to the system message
         summary = state.get("summary", "")
@@ -74,7 +74,7 @@ class SocraticAgent:
         if summary:
             system_message += summary_system_prompt.format(summary=summary)
         # if conversationalStyle:
-        #     system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
+        #     system_message += f"\n\n ## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
         messages = [SystemMessage(content=system_message)] + state['messages']
 
@@ -122,12 +122,12 @@ class SocraticAgent:
         #     conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
-        messages = state["messages"][:-1] + [SystemMessage(content=summary_message)] 
+        messages = [SystemMessage(content=summary_message)] + state["messages"][:-1]
         valid_messages = self.check_for_valid_messages(messages)
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        # messages = state["messages"][:-1] + [SystemMessage(content=conversationalStyle_message)]
+        # messages = [SystemMessage(content=conversationalStyle_message)] + state["messages"][:-1]
         # valid_messages = self.check_for_valid_messages(messages)
         # conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 

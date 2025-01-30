@@ -74,7 +74,7 @@ class InformationalAgent:
         if summary:
             system_message += summary_system_prompt.format(summary=summary)
         # if conversationalStyle:
-        #     system_message += f"## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
+        #     system_message += f"\n\n ## Known conversational style and preferences of the student for this conversation: {conversationalStyle}. \n\nYour answer must be in line with this conversational style."
 
         messages = [SystemMessage(content=system_message)] + state['messages']
 
@@ -183,7 +183,7 @@ class InformationalAgent:
     
 agent = InformationalAgent()
 def invoke_informational_agent(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
-    print(f'in invoke_informational_agent(), query = {query}, thread_id = {session_id}')
+    print(f'in invoke_informational_agent(), thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
     response_events = agent.app.invoke({"messages": conversation_history, "summary": summary, "conversational_style": conversationalStyle}, config=config, stream_mode="values") #updates
