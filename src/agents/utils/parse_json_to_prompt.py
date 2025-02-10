@@ -83,6 +83,10 @@ class PartDetails:
 class QuestionDetails:
     def __init__(
         self,
+        setNumber: Optional[int] = None,
+        setName: Optional[str] = None,
+        setDescription: Optional[str] = None,
+        questionNumber: Optional[int] = None,
         questionTitle: Optional[str] = None,
         questionGuidance: Optional[str] = None,
         questionContent: Optional[str] = None,
@@ -90,6 +94,10 @@ class QuestionDetails:
         durationUpperBound: Optional[int] = None,
         parts: Optional[List[PartDetails]] = [],
     ):
+        self.setNumber = setNumber
+        self.setName = setName
+        self.setDescription = setDescription
+        self.questionNumber = questionNumber
         self.questionTitle = questionTitle
         self.questionGuidance = questionGuidance
         self.questionContent = questionContent
