@@ -120,12 +120,12 @@ class BaseAgent:
             conversationalStyle_message = self.conversation_preference_prompt
 
         # STEP 1: Summarize the conversation
-        messages = [SystemMessage(content=summary_message)] + state["messages"][:-1]
+        messages = state["messages"][:-1] + [HumanMessage(content=summary_message)]
         valid_messages = self.check_for_valid_messages(messages)
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
-        messages = [SystemMessage(content=conversationalStyle_message)] + state["messages"][:-1]
+        messages = state["messages"][:-1] + [HumanMessage(content=conversationalStyle_message)]
         valid_messages = self.check_for_valid_messages(messages)
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
