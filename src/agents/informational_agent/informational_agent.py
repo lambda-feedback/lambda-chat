@@ -124,7 +124,7 @@ class InformationalAgent:
         # STEP 1: Summarize the conversation
         messages = [SystemMessage(content=summary_message)] + state["messages"][:-1]
         valid_messages = self.check_for_valid_messages(messages)
-        print(f"valid_messages SUMMARY:: {valid_messages.join(' ')}")
+        print(f"valid_messages SUMMARY:: {valid_messages}")
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
