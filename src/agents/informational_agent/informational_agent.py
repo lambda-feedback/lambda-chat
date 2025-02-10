@@ -124,7 +124,6 @@ class InformationalAgent:
         # STEP 1: Summarize the conversation
         messages = state["messages"][:-1] + [HumanMessage(content=summary_message)]
         valid_messages = self.check_for_valid_messages(messages)
-        print(f"valid_messages SUMMARY:: {valid_messages}")
         summary_response = self.summarisation_llm.invoke(valid_messages)
 
         # STEP 2: Analyze the conversational style
@@ -193,8 +192,6 @@ def invoke_informational_agent(query: str, conversation_history: list, summary: 
     # Gather Metadata from the agent
     summary = agent.get_summary()
     conversationalStyle = agent.get_conversational_style()
-
-    print(f'SUMMARY: {summary}')
 
     return {
         "input": query,
