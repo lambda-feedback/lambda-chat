@@ -97,6 +97,8 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
   #  Save Conversation
   conversation_output = {
     "conversation_id": conversation_id+"_"+student_agent_type+"_"+tutor_agent_type+"_synthetic",
+    "student_agent_type": student_agent_type,
+    "tutor_agent_type": tutor_agent_type,
     "conversation": conversation_history
   }
   return conversation_output
