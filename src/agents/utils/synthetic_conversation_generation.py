@@ -79,11 +79,11 @@ def generate_synthetic_conversations(raw_text: str, num_turns: int, student_agen
       # Student starts
       student_response = invoke_student_agent(message, conversation_history[:-1], summary, student_agent_type, question_response_details_prompt, conversation_id)
       conversation_history.append({
-        "role": "assistant",
+        "role": "user",
         "content": student_response["output"]
       })
     else:
-      tutor_response = invoke_tutor_agent(message, conversation_history[:-1], summary, conversational_style, question_response_details_prompt, conversation_id)
+      tutor_response = invoke_tutor_agent(message, conversation_history, summary, conversational_style, question_response_details_prompt, conversation_id)
       conversation_history.append({
         "role": "assistant",
         "content": tutor_response["output"]
