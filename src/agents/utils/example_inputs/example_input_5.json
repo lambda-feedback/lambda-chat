@@ -83,6 +83,10 @@
         }
       ],
       "questionInformation": {
+        "setNumber": 2,
+        "setName": "Intro Topic: (Chemistry) Vectors",
+        "setDescription": "",
+        "questionNumber": 2,
         "questionTitle": "Dot Product ( Hard )",
         "questionGuidance": null,
         "questionContent": "",

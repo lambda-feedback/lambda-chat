@@ -198,6 +198,10 @@
         }
       ],
       "questionInformation": {
+        "setNumber": 2,
+        "setName": "Intro Topic: (Chemistry) Vectors",
+        "setDescription": "",
+        "questionNumber": 0,
         "questionTitle": "Vector Arithmetics",
         "questionGuidance": null,
         "questionContent": "$$\n\\vec{a}=\\begin{bmatrix}1 \\\\ 2\\\\ 3\\end{bmatrix} \\quad \\vec{b}=\\begin{bmatrix}-2 \\\\ 3\\\\ -4\\end{bmatrix} \\quad \\vec{c}=\\begin{bmatrix} 0 \\\\\\ 4\\\\ -1\\end{bmatrix}\n$$",

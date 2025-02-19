@@ -52,6 +52,10 @@
         }
       ],
       "questionInformation": {
+        "setNumber": 0,
+        "setName": "Intro Topic: (Chemistry) Vectors",
+        "setDescription": "",
+        "questionNumber": 4,
         "questionTitle": "Dot Product",
         "questionGuidance": "",
         "questionContent": "$$\n\\vec{a}=\\begin{bmatrix}1 \\\\ 3\\\\ -2\\end{bmatrix} \\quad \\vec{b}=\\begin{bmatrix}0 \\\\ 3\\\\ 1\\end{bmatrix} \\quad \\vec{c}=\\begin{bmatrix} 1 \\\\\\ -1\\\\ -3\\end{bmatrix}\n$$",

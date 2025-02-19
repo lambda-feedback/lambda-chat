@@ -59,6 +59,10 @@
         }
       ],
       "questionInformation": {
+        "setNumber": 0,
+        "setName": "Fourier Series",
+        "setDescription": "",
+        "questionNumber": 0,
         "questionTitle": "Piecewise function Fourier series",
         "questionGuidance": "",
         "questionContent": "Find $a_0$, $a_n$ and $b_n$ for the Fourier series of $f(x)$, which is assumed to have period $4$.\n\n&#x20;&#x20;\n\n$$\nf(x)= \\begin{cases}0, & -2 \\leq x<-1 \\\\\\ \\frac{2 k}{3}, & -1 \\leq x<1 \\\\\\ -\\frac{k}{2}, & 1 \\leq x<2.\\end{cases}\n$$\n",
