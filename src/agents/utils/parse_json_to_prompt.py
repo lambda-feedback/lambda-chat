@@ -214,6 +214,4 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
 
     result = f"{questionDetails}\n{partsDetails}".replace("&#x20;&#x20;", "").replace("&#x20", "").replace("\n\n", "\n")
 
-    print("PROMPT::", result)
-
     return result
