@@ -135,7 +135,6 @@ class InformationalAgent:
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
         return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
-        # return {"summary": summary_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
         """

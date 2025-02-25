@@ -30,7 +30,7 @@ try:
       STEP 2: Extract the parameters from the JSON
     """
     # NOTE: #### This is the testing message!! #####
-    message = "Hi" 
+    message = "What do you know about me?" 
     # NOTE: ########################################
 
     # replace "mock" in the message and conversation history with the actual message
@@ -57,7 +57,7 @@ try:
             question_information,
             question_access_information
         )
-        print("Question Response Details Prompt:", question_response_details_prompt, "\n\n")
+        # print("Question Response Details Prompt:", question_response_details_prompt, "\n\n")
 
     if "agent_type" in params:
         agent_type = params["agent_type"]
