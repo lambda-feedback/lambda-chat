@@ -1,10 +1,10 @@
 try:
-    from ..llm_factory import OpenAILLMs
+    from ..llm_factory import OpenAILLMs, GoogleAILLMs
     from .informational_prompts import \
         informational_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from ..utils.types import InvokeAgentResponseType
 except ImportError:
-    from src.agents.llm_factory import OpenAILLMs
+    from src.agents.llm_factory import OpenAILLMs, GoogleAILLMs
     from src.agents.informational_agent.informational_prompts import \
         informational_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt, summary_system_prompt
     from src.agents.utils.types import InvokeAgentResponseType
@@ -37,7 +37,7 @@ class State(TypedDict):
 
 class InformationalAgent:
     def __init__(self):
-        llm = OpenAILLMs(temperature=0.25)
+        llm = GoogleAILLMs()
         self.llm = llm.get_llm()
         summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
@@ -135,7 +135,6 @@ class InformationalAgent:
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
         return {"summary": summary_response.content, "conversationalStyle": conversationalStyle_response.content, "messages": delete_messages}
-        # return {"summary": summary_response.content, "messages": delete_messages}
     
     def should_summarize(self, state: State) -> str:
         """
