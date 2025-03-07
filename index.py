@@ -39,4 +39,7 @@ def handler(event, context):
         "body": chatbot_response
     }
 
+    # Log the response for debugging purposes
+    print("Returning response:", json.dumps(response, indent=2))
+
     return response

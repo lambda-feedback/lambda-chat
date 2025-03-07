@@ -37,7 +37,7 @@ class State(TypedDict):
 
 class InformationalAgent:
     def __init__(self):
-        llm = OpenAILLMs()
+        llm = GoogleAILLMs()
         self.llm = llm.get_llm()
         summarisation_llm = OpenAILLMs()
         self.summarisation_llm = summarisation_llm.get_llm()
