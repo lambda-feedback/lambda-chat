@@ -85,7 +85,7 @@ class InformationalAgent:
         self.summary = summary
         self.conversationalStyle = conversationalStyle
 
-        return {"summary": summary, "messages": [response]}
+        return {"summary": summary, "conversationalStyle": conversationalStyle, "messages": [response]}
     
     def check_for_valid_messages(self, messages: list[AllMessageTypes]) -> list[ValidMessageTypes]:
         """ Removing the RemoveMessage() from the list of messages """
