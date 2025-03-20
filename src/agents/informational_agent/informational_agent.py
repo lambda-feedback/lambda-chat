@@ -36,7 +36,7 @@ class State(TypedDict):
     conversationalStyle: str
 
 class InformationalAgent:
-    def __init__(self):
+    def __init__(self, informational_role_prompt: str = informational_role_prompt, conv_pref_prompt: str = conv_pref_prompt, update_conv_pref_prompt: str = update_conv_pref_prompt, summary_prompt: str = summary_prompt, update_summary_prompt: str = update_summary_prompt):
         llm = GoogleAILLMs()
         self.llm = llm.get_llm()
         summarisation_llm = OpenAILLMs()
@@ -181,7 +181,7 @@ class InformationalAgent:
         return event["messages"][-1].content
     
 agent = InformationalAgent()
-def invoke_informational_agent(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str) -> InvokeAgentResponseType:
+def invoke_informational_agent(query: str, conversation_history: list, summary: str, conversationalStyle: str, question_response_details: str, session_id: str, agent: InformationalAgent = agent) -> InvokeAgentResponseType:
     print(f'in invoke_informational_agent(), thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}

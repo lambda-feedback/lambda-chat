@@ -136,3 +136,4 @@ dmypy.json
 # Synthetic data conversations
 src/agents/utils/synthetic_conversations/*.json
 src/agents/utils/synthetic_conversations/*.csv
+src/agents/utils/synthetic_conversations/*.tsv
