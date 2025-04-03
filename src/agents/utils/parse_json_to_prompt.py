@@ -163,7 +163,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         return f"""
         ## Response Area: {responseArea.position + 1}
         {f'Area task: What is {responseArea.preResponseText} ?' if responseArea.preResponseText else ''}
-        (Secret - not to be shared) Expected Answer: {responseArea.answer};
+        (Keep it Secret) Expected Answer: {responseArea.answer};
         {submissionDetails}"""
 
     def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
