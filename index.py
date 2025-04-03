@@ -11,6 +11,15 @@ def handler(event, context):
     # Log the input event for debugging purposes
     print("Received event:", json.dumps(event, indent=2))
 
+    if "body" in event:
+        try:
+            event = json.loads(event["body"])
+        except json.JSONDecodeError:
+            return {
+                "statusCode": 400,
+                "body": "Invalid JSON format in the body. Please check the input."
+            }
+
     if "message" not in event:
         return {
             "statusCode": 400,
