@@ -81,6 +81,7 @@ class InformationalAgent:
         valid_messages = self.check_for_valid_messages(messages)
         print("Informational agent valid messages, ready for LLM call...")
         response = self.llm.invoke(valid_messages)
+        print("Informational agent response successfully received.")
 
         # Save summary for fetching outside the class
         self.summary = summary

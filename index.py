@@ -9,7 +9,7 @@ def handler(event, context):
     Lambda handler function
     """
     # Log the input event for debugging purposes
-    print("Received event:", " ".join(json.dumps(event, indent=2).splitlines()))
+    # print("Received event:", " ".join(json.dumps(event, indent=2).splitlines()))
 
     if "body" in event:
         try:
@@ -49,6 +49,6 @@ def handler(event, context):
     }
 
     # Log the response for debugging purposes
-    print("Returning response:", json.dumps(response, indent=2))
+    print("Returning response:", " ".join(json.dumps(response, indent=2).splitlines()))
 
     return response
