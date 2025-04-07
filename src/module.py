@@ -63,9 +63,9 @@ def chat_module(message: Any, params: Params) -> Result:
                 question_information,
                 question_access_information
             )
-            print("INFO:: ", question_response_details_prompt)
+            print("INFO:: ", " ".join(question_response_details_prompt.splitlines()))
         except Exception as e:
-            print("ERROR:: ", e)
+            print("ERROR on parsing the JSON event to prompt:: ", e)
             raise Exception("Internal Error: The question response details could not be parsed.")
     if "agent_type" in params:
         agent_type = params["agent_type"]

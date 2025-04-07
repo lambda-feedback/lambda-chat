@@ -79,7 +79,9 @@ class InformationalAgent:
         messages = [SystemMessage(content=system_message)] + state['messages']
 
         valid_messages = self.check_for_valid_messages(messages)
+        print("Informational agent valid messages, ready for LLM call...")
         response = self.llm.invoke(valid_messages)
+        print("Informational agent response successfully received.")
 
         # Save summary for fetching outside the class
         self.summary = summary
@@ -131,6 +133,7 @@ class InformationalAgent:
         valid_messages = self.check_for_valid_messages(messages)
         conversationalStyle_response = self.summarisation_llm.invoke(valid_messages)
 
+        print("Informational agent summary and conversational style responses successfully received.")
         # Delete messages that are no longer wanted, except the last ones
         delete_messages: list[AllMessageTypes] = [RemoveMessage(id=m.id) for m in state["messages"][:-3]]
 
@@ -153,6 +156,7 @@ class InformationalAgent:
 
         # always pairs of (sent, response) + 1 latest message
         if nr_messages > self.max_messages_to_summarize:
+            print("Informational agent: summarizing conversation needed...")
             return "summarize_conversation"
         return "call_llm"    
 
@@ -185,7 +189,9 @@ def invoke_informational_agent(query: str, conversation_history: list, summary: 
     print(f'in invoke_informational_agent(), thread_id = {session_id}')
 
     config = {"configurable": {"thread_id": session_id, "summary": summary, "conversational_style": conversationalStyle, "question_response_details": question_response_details}}
+    print("Informational agent invoking...")
     response_events = agent.app.invoke({"messages": conversation_history, "summary": summary, "conversational_style": conversationalStyle}, config=config, stream_mode="values") #updates
+    print("Informational agent response received.")
     pretty_printed_response = agent.pretty_response_value(response_events) # get last event/ai answer in the response
 
     # Gather Metadata from the agent
