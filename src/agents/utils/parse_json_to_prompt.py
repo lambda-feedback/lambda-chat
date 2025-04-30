@@ -107,9 +107,17 @@ class QuestionDetails:
 
 # questionAccessInformation type
 class CurrentPart:
-    def __init__(self, id: str = None, position: int = None, timeTakenPart: Optional[str] = None, markedDonePart: Optional[str] = None):
+    def __init__(
+        self, 
+        id: str = None, 
+        position: int = None, 
+        universalPartId: Optional[str] = None,
+        timeTakenPart: Optional[str] = None, 
+        markedDonePart: Optional[str] = None
+    ):
         self.id = id
         self.position = position
+        self.universalPartId = universalPartId
         self.timeTakenPart = timeTakenPart
         self.markedDonePart = markedDonePart
 
