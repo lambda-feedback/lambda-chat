@@ -23,7 +23,6 @@ class TestChatIndexFunction(unittest.TestCase):
     Use module() to check your algorithm works
     as it should.
     """
-    # TODO: update the test cases
 
     def test_missing_argument(self):
         arguments = ["message", "params"]
@@ -37,7 +36,7 @@ class TestChatIndexFunction(unittest.TestCase):
 
             result = handler(event, None)
 
-            self.assertEqual(result.get("statusCode"), 400 or 500)
+            self.assertIn(result.get("statusCode"), [400, 500])
     
     def test_correct_arguments(self):
         event = {
@@ -47,7 +46,7 @@ class TestChatIndexFunction(unittest.TestCase):
 
         result = handler(event, None)
 
-        self.assertEqual(result.get("statusCode"), 200 or 500)
+        self.assertIn(result.get("statusCode"), [200, 500])
 
     def test_correct_response(self):
         event = {
@@ -57,5 +56,4 @@ class TestChatIndexFunction(unittest.TestCase):
 
         result = handler(event, None)
 
-        self.assertEqual(result.get("statusCode"), 200 or 500)
-        
+        self.assertIn(result.get("statusCode"), [200, 500])
