@@ -85,12 +85,16 @@ def chat_module(message: Any, params: Params) -> Result:
     else:
         raise Exception("Input Parameter Error: Unknown Chat Agent Type")
 
-    chatbot_response = invoke(query=message, \
-                            conversation_history=conversation_history, \
-                            summary=summary, \
-                            conversationalStyle=conversationalStyle, \
-                            question_response_details=question_response_details_prompt, \
-                            session_id=conversation_id)
+    try:
+        chatbot_response = invoke(query=message, \
+                                conversation_history=conversation_history, \
+                                summary=summary, \
+                                conversationalStyle=conversationalStyle, \
+                                question_response_details=question_response_details_prompt, \
+                                session_id=conversation_id)
+    except Exception as e:
+        print("ERROR on invoking the agent:: ", e)
+        raise Exception("Internal Error: The agent could not be invoked. Quota may be exceeded or the agent may not be available.")
 
     end_time = time.time()
 
