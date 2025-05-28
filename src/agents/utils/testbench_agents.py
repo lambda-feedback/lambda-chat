@@ -18,7 +18,7 @@ except ImportError:
 
 # File path for the input text
 path = "src/agents/utils/"
-input_file = path + "example_inputs/" + "example_input_4.json"
+input_file = path + "example_inputs/" + "example_input_7.json"
 
 """
  STEP 1: Read the USER INFO from the WEB client from a file
@@ -77,10 +77,9 @@ def testbench_agents(message, remove_index, agent_type = "informational", inform
             main_prompt = role_prompt_components[0]
             teaching_methods = role_prompt_components[1].split("## Teaching Methods:\n")[1].split("\n")
             key_qualities = role_prompt_components[2].split("## Key Qualities:\n")[1].split("\n")
-            example_style = role_prompt_components[3].split("Example Conversation Style:\n")[1].split("\n")
-            flexibility_prompt = [item + '.' for item in role_prompt_components[4].split("## Flexibility:\n")[1].split(".") if item]
+            flexibility_prompt = [item + '.' for item in role_prompt_components[3].split("## Flexibility:\n")[1].split(".") if item]
             governance_prompt = [item + '.' for item in role_prompt_components[-1].split("## Governance:\n")[1].split(".") if item]
-            prompts = [main_prompt] + teaching_methods + key_qualities + example_style + flexibility_prompt + governance_prompt
+            prompts = [main_prompt] + teaching_methods + key_qualities + flexibility_prompt + governance_prompt
             
             # Remove one of the prompts to test the agent's performance
             prompt_missing = prompts[remove_index]
