@@ -1,151 +1,287 @@
 {
-  "message": "what should i do for this part?",
+  "message": "how long have i spent on this?",
   "params": {
     "include_test_data": true,
     "conversation_history": [
-      { "type": "user", "content": "what should i do for this part?" }
+      { "type": "user", "content": "how long have i spent on this?" }
     ],
     "summary": "",
     "conversational_style": "",
     "question_response_details": {
       "questionSubmissionSummary": [
         {
-          "publishedPartId": "37a703f7-cd61-4f63-aed2-17f83451b5c5",
-          "publishedPartPosition": 2,
-          "publishedResponseAreaId": "63dd1aee-5724-4cf3-8dcd-4b0ca7953c2a",
+          "publishedPartId": "5da03951-1d47-4275-8e03-0248e633e7f0",
+          "publishedPartPosition": 0,
+          "publishedResponseAreaId": "c24dabd1-e7df-4166-b671-496f7f5a2810",
           "publishedResponseAreaPosition": 0,
-          "responseAreaUniversalId": "cc912f18-33fb-4612-a024-492f01443c6f",
-          "publishedResponseAreaPreResponseText": "\\(\\tau_{\\mathrm{tw}}=\\)",
-          "publishedResponseType": "NUMBER",
-          "publishedResponseConfig": null,
+          "responseAreaUniversalId": "9788e5df-abb6-422d-9498-ae11d97af4b5",
+          "publishedResponseAreaPreResponseText": "$z+w=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
           "totalSubmissions": 0,
           "totalWrongSubmissions": 0
         },
         {
-          "publishedPartId": "f63ee543-c338-49a9-b07c-14789966d08f",
-          "publishedPartPosition": 3,
-          "publishedResponseAreaId": "3ba5a1eb-22cc-4599-a0e6-35e892c173c5",
+          "publishedPartId": "86061e9a-038f-4892-a042-9eab3a219134",
+          "publishedPartPosition": 1,
+          "publishedResponseAreaId": "881b45ca-0168-4197-b250-34a2f48f67d3",
           "publishedResponseAreaPosition": 0,
-          "responseAreaUniversalId": "776c0c03-cc7a-4e9c-b008-5ce8cc07ca4b",
-          "publishedResponseAreaPreResponseText": "\\(\\tau_{\\mathrm{bw}} = \\)",
-          "publishedResponseType": "NUMBER",
-          "publishedResponseConfig": null,
+          "responseAreaUniversalId": "45d683b8-8334-47e3-84e1-7c3f37fc34c6",
+          "publishedResponseAreaPreResponseText": "$z-w=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        },
+        {
+          "publishedPartId": "f2983dcd-bbb9-4b86-9bb7-ee0c161f6055",
+          "publishedPartPosition": 2,
+          "publishedResponseAreaId": "7342514b-c5e5-492c-a73a-23e5c28e6df5",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "e317b473-9b54-4a0f-a1ca-b4bd3da9e914",
+          "publishedResponseAreaPreResponseText": "$zw=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        },
+        {
+          "publishedPartId": "760f6537-33da-41fc-a036-ad96c1bc5172",
+          "publishedPartPosition": 3,
+          "publishedResponseAreaId": "48271de1-fe13-4bfa-8b4b-26d1360b30c0",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "406ac80f-cff6-4973-bd86-45c210c84e9a",
+          "publishedResponseAreaPreResponseText": "$z\\bar{w}=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        },
+        {
+          "publishedPartId": "d361520a-5242-4d92-b5f3-db3b678261d6",
+          "publishedPartPosition": 4,
+          "publishedResponseAreaId": "9af1f1da-4975-41ff-b058-c6debf716aee",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "46fc910b-e799-4bbf-8252-28f9d94ad5bf",
+          "publishedResponseAreaPreResponseText": "$\\bar{z}\\bar{w}=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
+          "totalSubmissions": 0,
+          "totalWrongSubmissions": 0
+        },
+        {
+          "publishedPartId": "79bca4bf-ac93-4fdb-97fc-44489b8528c5",
+          "publishedPartPosition": 5,
+          "publishedResponseAreaId": "45a1c6ed-8bb0-4491-ad06-f9f03fad1894",
+          "publishedResponseAreaPosition": 0,
+          "responseAreaUniversalId": "c4158b38-ad92-41f2-8767-fd985a7c0c30",
+          "publishedResponseAreaPreResponseText": "$zw^{-1}=$",
+          "publishedResponseType": "EXPRESSION",
+          "publishedResponseConfig": {
+            "allowPhoto": true,
+            "allowHandwrite": true
+          },
           "totalSubmissions": 0,
           "totalWrongSubmissions": 0
         }
       ],
       "questionInformation": {
-        "questionTitle": "Flow between two parallel plates",
-        "questionGuidance": "What is the shear stress on a flat plate? This problem will help you answer this question that you will find often in many engineering problems.",
-        "questionContent": "Consider the flow between two infinite parallel plates, separated by a distance $h$ with the top one moving from left to right with constant speed $U_0$. Consider the flow to be Newtonian, incompressible, with uniform dynamic viscosity. As schematically shown in the figure below, the velocity field with respect to a Cartesian frame of reference is $\\vec{u}=\\left[U_0y/h~~0~~0\\right]^{T}$, with the $x$-axis oriented from left to right.\n\n![](https://lambda-feedback-dev-frontend-client-bucket.s3.amazonaws.com/77c9b9d3-e6cb-43a7-85c6-6464c6af3700/9f649438-a9d8-4460-a9fb-55ef36422cf3.png).&#x20;\n\nGiven $U_0=10$ m/s, $h=10$ mm and $\\mu=1\\times 10^{-3}$ $\\mathrm{kg/(ms)}$,&#x20;\n",
-        "durationLowerBound": 15,
-        "durationUpperBound": 25,
+        "setNumber": 0,
+        "setName": "CW1",
+        "setDescription": "",
+        "questionNumber": 0,
+        "questionTitle": "Simple questions",
+        "questionGuidance": null,
+        "questionContent": "Given $z=2+3i$ and $w=1-2i$, calculate the following complex numbers in&#x20;\n",
+        "durationLowerBound": null,
+        "durationUpperBound": null,
         "parts": [
           {
-            "publishedPartId": "8e35723d-e549-4dbd-97ca-29c1134ceb69",
+            "publishedPartId": "5da03951-1d47-4275-8e03-0248e633e7f0",
             "publishedPartPosition": 0,
-            "publishedPartContent": "Compute the deformation tensor at any location in the flow field.\n",
-            "publishedPartAnswerContent": "$$\n\\underline{\\underline{D}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ 500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n\n",
-            "publishedWorkedSolutionSections": [
-              {
-                "id": "deec8cb8-7441-46e9-8435-e0af7b8d9cf8",
-                "position": 0,
-                "title": null,
-                "content": "The deformation tensor for such a flow is:\n\n***\n\n$$\n\\underline{\\underline{D}}= \\frac{1}{2}(\\underline{\\underline{J}}+\\underline{\\underline{J}}^T)=\\begin{bmatrix} 0 & U_0/(2h) & 0 \\\\ U_0/(2h) & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix}.\n$$\n\n***\n\nThe deformation tensor is uniform and the only non-zero component is $D_{xy}=D_{yx}=500~\\mathrm{s^{\\scriptsize. -1}}$. Hence:\n\n***\n\n$$\n\\underline{\\underline{D}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ 500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n"
-              }
-            ],
-            "publishedResponseAreas": []
-          },
-          {
-            "publishedPartId": "cdef8c4e-c929-4655-a190-1ace4824dd6a",
-            "publishedPartPosition": 1,
-            "publishedPartContent": "Compute the spin tensor at any location in the flow field.\n",
-            "publishedPartAnswerContent": "$$\n\\underline{\\underline{\\Omega}}= \\begin{bmatrix} 0 & 500 & 0 \\\\ -500 & 0 & 0 \\\\ 0 & 0 & 0 \\\\ \\end{bmatrix} \\mathrm{s^{\\scriptsize -1}}.\n$$\n\nSee worked solutions for an explanation.\n",
-            "publishedWorkedSolutionSections": [
-              {
-                "id": "8cbb1d33-9c15-4969-99c0-87859a761fac",
-                "position": 0,
-                "title": null,
-                "content": "The spin tensor for such a flow is:\n\n***\n\n$$\n\\underline{\\underline{\\Omega}}=\\frac{1}{2}\\left(\\underline{\\underline{J}}-\\underline{\\underline{J}}^T\\right)=\\begin{bmatrix}0 & U_0/(2h) & 0\\\\-U_0/(2h)&0&0\\\\0&0&0\\end{bmatrix}.\n$$\n\n***\n\nAgain, also the spin tensor is uniform all over the flow and the only non-zero component is $\\Omega_{xy}=-\\Omega_{yx}=500 \\mathrm{s}^{-1}$. This means that any infinitesimal fluid particle spins and stretches at the same time. This is also illustrated below:\n\n***\n\n![](https://lambda-feedback-dev-frontend-client-bucket.s3.amazonaws.com/77c9b9d3-e6cb-43a7-85c6-6464c6af3700/51e0490a-79d3-483b-a9f2-7816066f0963.png)\n"
-              }
-            ],
-            "publishedResponseAreas": []
-          },
-          {
-            "publishedPartId": "37a703f7-cd61-4f63-aed2-17f83451b5c5",
-            "publishedPartPosition": 2,
-            "publishedPartContent": "Compute the shear stress on the top plate.\n",
-            "publishedPartAnswerContent": "$$\n\\boxed{\\tau_\\mathrm{tw}=-1 \\mathrm{Pa}}\n$$",
-            "publishedWorkedSolutionSections": [
-              {
-                "id": "d8b68bfc-0d70-4f9b-89bf-81796da1b392",
-                "position": 0,
-                "title": null,
-                "content": "This question uses the same geometry as Q9.4. However, the origin here is located at the bottom plate; the boundary condition at the top plate is different; and we are given information about the shear stress tensor, $\\underline{\\underline{\\tau}}$: for a Newtonian fluid and an incompressible flow, $\\underline{\\underline{\\tau}}=2\\mu\\underline{\\underline{D}}$. (Note that $\\underline{\\underline{\\sigma}}=\\underline{\\underline{\\tau}}-p\\underline{\\underline{I}}$).\n\n&#x20;&#x20;\n\n***\n\nFollowing the solution to Q9.4 (neglecting the $z-$ direction), the force per unit area exerted by the top plate *on the fluid* is\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\underline{\\underline{\\sigma}}\\hat{n}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=h}\\begin{bmatrix} n_x\\\\ n_y\\end{bmatrix}_{ y=h}\n$$\n\n***\n\nNoting that $n_x=0$,\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=h}\\begin{bmatrix} 0\\\\ 1\\end{bmatrix}_{ y=h}\n$$\n\n\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}=\\begin{bmatrix} \\sigma_{xy}\\\\\\sigma_{yy} \\end{bmatrix}_{ y=h}=\\begin{bmatrix} \\tau_{xy}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} 2\\mu{}D_{xy}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} \\mu{}\\frac{\\partial{}u}{\\partial{}y}\\\\-p \\end{bmatrix}_{y=h}=\\begin{bmatrix} \\mu{}U_0/h\\\\-p \\end{bmatrix}_{y=h}.\n$$\n\n***\n\n&#x20;&#x20;\n\nThe shearing component of the stress is the first component ($x-$direction). The shear stress on the fluid is therefore\n\n***\n\n$$\n\\mathcal{T}_{x}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)}\\ = \\mu{}U_0/h = 10^{-3}\\ast{}10/10^{-2} = 1\\:\\mathrm{Pa}.\n$$\n\n&#x20;&#x20;\n\n***\n\nNote that the viscous stress tensor in this specific flow is constant everywhere (i.e. $\\tau_{xy}$ does not depend on space in this specific flow). The stress on the plate is equal and opposite to the stress on the fluid,&#x20;\n\n***\n\n$$\n\\boxed{ \\tau_{tw} = -\\mathcal{T}_{x}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)} =\\mathcal{T}_{x}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=h\\right)} = -1 \\:\\mathrm{Pa}. }\n$$\n\n***\n\n&#x20;&#x20;\n\nThe force on the plate due to $\\tau_{tw}$ opposes the motion of the plate. In fact, it is necessary to apply a force on the plate from left to right to keep the plate moving with constant velocity $U_0$ (note that if the plate moves with constant velocity, the sum of the forces on the plate has to be the null vector).\n\n&#x20;&#x20;\n\n***\n\nThe approach to the solution shown here takes advantage of the work already done in Q9.4. The benefit is that the signs of each term were already carefully accounted for. An alternative approach would have been to start from first principles. Given that only the stress is required (not the force) we would not need to include the area and would not need to start with an integral. We could look at the geometry and conclude that $\\tau_{xy}$ is the component of the stress that we require. If you took this approach, be careful to be rigorous about how you derive the sign of the stress on the plate.\n"
-              }
-            ],
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\nz+w=3+i\n$$\n",
+            "publishedWorkedSolutionSections": [],
             "publishedResponseAreas": [
               {
-                "id": "63dd1aee-5724-4cf3-8dcd-4b0ca7953c2a",
+                "id": "c24dabd1-e7df-4166-b671-496f7f5a2810",
                 "position": 0,
-                "universalResponseAreaId": "cc912f18-33fb-4612-a024-492f01443c6f",
-                "preResponseText": "\\(\\tau_{\\mathrm{tw}}=\\)",
+                "universalResponseAreaId": "9788e5df-abb6-422d-9498-ae11d97af4b5",
+                "preResponseText": "$z+w=$",
                 "Response": {
-                  "id": "a1ddb6fa-25be-4045-bdea-e995848bd508",
-                  "responseType": "NUMBER",
-                  "config": null,
-                  "answer": -1
+                  "id": "11c420a3-30ce-4b28-898d-f9e9a1edf145",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "3+i"
                 },
-                "responseType": "NUMBER",
-                "answer": -1
+                "responseType": "EXPRESSION",
+                "answer": "3+i"
               }
             ]
           },
           {
-            "publishedPartId": "f63ee543-c338-49a9-b07c-14789966d08f",
-            "publishedPartPosition": 3,
-            "publishedPartContent": "Compute the shear stress on the bottom plate.\n",
-            "publishedPartAnswerContent": "$$\n\\boxed{\\tau_\\mathrm{bw} = 1 \\mathrm{Pa}}\n$$",
+            "publishedPartId": "86061e9a-038f-4892-a042-9eab3a219134",
+            "publishedPartPosition": 1,
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\nz-w=1+5i\n$$\n",
+            "publishedWorkedSolutionSections": [],
+            "publishedResponseAreas": [
+              {
+                "id": "881b45ca-0168-4197-b250-34a2f48f67d3",
+                "position": 0,
+                "universalResponseAreaId": "45d683b8-8334-47e3-84e1-7c3f37fc34c6",
+                "preResponseText": "$z-w=$",
+                "Response": {
+                  "id": "45397c24-a0fd-42d8-b19c-276776c34b17",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "1+5i"
+                },
+                "responseType": "EXPRESSION",
+                "answer": "1+5i"
+              }
+            ]
+          },
+          {
+            "publishedPartId": "f2983dcd-bbb9-4b86-9bb7-ee0c161f6055",
+            "publishedPartPosition": 2,
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\nzw=8-i\n$$\n",
             "publishedWorkedSolutionSections": [
               {
-                "id": "6900ae4e-1562-4730-bc26-149db92ee449",
+                "id": "be1a7366-d9eb-43a7-84b6-ef29862c3390",
                 "position": 0,
-                "title": null,
-                "content": "On the bottom plate the velocity gradient and therefore the shear stress are the same as on the top plate. However, the bottom plate is oriented in the opposite direction to the top plate. Following the same approach as part (c), the force per unit area exerted by the *bottom* plate *on the fluid* is\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}=\\begin{bmatrix} \\sigma_{xx}& \\sigma_{xy}\\\\\\sigma_{yx}&\\sigma_{yy} \\end{bmatrix}_{ y=0}\\begin{bmatrix} 0\\\\ -1\\end{bmatrix}_{ y=0}\n$$\n\nhence\n\n***\n\n$$\n\\vec{\\mathcal{T}}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}=\\begin{bmatrix} -\\sigma_{xy}\\\\-\\sigma_{yy} \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\tau_{xy}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -2\\mu{}D_{xy}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\mu{}\\frac{\\partial{}u}{\\partial{}y}\\\\ p \\end{bmatrix}_{y=0}=\\begin{bmatrix} -\\mu{}U_0/h\\\\ p \\end{bmatrix}_{y=0}.\n$$\n\n***\n\nThe stress on the fluid is the force per unit area; and the shearing component of the stress is the first component ($x-$direction). Given the orientation of the bottom plate, the shear stress exerted on the fluid by the bottom plate is\n\n***\n\n$$\n\\mathcal{T}_{x}^{\\left(-\\hat{e}_y\\right)}{\\footnotesize\\left( y=0\\right)}\\ = -\\mu{}U_0/h = -10^{-3}\\ast{}10/10^{-2} = -1\\:\\mathrm{Pa}.\n$$\n\n***\n\n&#x20;&#x20;\n\nThe stress on the plate is equal and opposite to the stress on the fluid,\n\n***\n\n$$\n\\boxed{ \\tau_{bw} = 1 \\:\\mathrm{Pa}. }\n$$\n"
+                "title": "",
+                "content": "To answer this question, we need to remember that:\n\n$$\ni=\\sqrt{-1}\\\\\ni^2=-1\n$$\n"
               }
             ],
             "publishedResponseAreas": [
               {
-                "id": "3ba5a1eb-22cc-4599-a0e6-35e892c173c5",
+                "id": "7342514b-c5e5-492c-a73a-23e5c28e6df5",
                 "position": 0,
-                "universalResponseAreaId": "776c0c03-cc7a-4e9c-b008-5ce8cc07ca4b",
-                "preResponseText": "\\(\\tau_{\\mathrm{bw}} = \\)",
+                "universalResponseAreaId": "e317b473-9b54-4a0f-a1ca-b4bd3da9e914",
+                "preResponseText": "$zw=$",
                 "Response": {
-                  "id": "6aff9851-4d28-4d16-855d-a1c3e81319a9",
-                  "responseType": "NUMBER",
-                  "config": null,
-                  "answer": 1
+                  "id": "b0e39daa-1801-4e41-893e-1cec2ae96894",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "8-i"
                 },
-                "responseType": "NUMBER",
-                "answer": 1
+                "responseType": "EXPRESSION",
+                "answer": "8-i"
+              }
+            ]
+          },
+          {
+            "publishedPartId": "760f6537-33da-41fc-a036-ad96c1bc5172",
+            "publishedPartPosition": 3,
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\nz\\bar{w}=-4+7i\n$$\n",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "0a0edb5e-61e6-4643-ae2f-207fd76040c3",
+                "position": 0,
+                "title": "",
+                "content": "To answer this question, we need to remember that:\n\n$$\ni=\\sqrt{-1}\\\\\ni^2=-1\n$$\n\nand that $\\bar{w}$ means the complex conjugate of the complex number $w$:\n\n$$\nw=1-2i\\\\\n\\bar{w}=1+2i\n$$\n\n"
+              }
+            ],
+            "publishedResponseAreas": [
+              {
+                "id": "48271de1-fe13-4bfa-8b4b-26d1360b30c0",
+                "position": 0,
+                "universalResponseAreaId": "406ac80f-cff6-4973-bd86-45c210c84e9a",
+                "preResponseText": "$z\\bar{w}=$",
+                "Response": {
+                  "id": "cc9f0b15-819c-4806-90e1-32c371108f38",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "-4+7i"
+                },
+                "responseType": "EXPRESSION",
+                "answer": "-4+7i"
+              }
+            ]
+          },
+          {
+            "publishedPartId": "d361520a-5242-4d92-b5f3-db3b678261d6",
+            "publishedPartPosition": 4,
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\n\\bar{z}\\bar{w}=8+i\n$$\n",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "b04de9e0-a99c-433b-b8b5-cd2fcc440e0a",
+                "position": 0,
+                "title": "",
+                "content": "To answer this question, we need to remember that:\n\n$$\ni=\\sqrt{-1}\\\\\ni^2=-1\n$$\n\nand that $\\bar{z}$ means the complex conjugate of the complex number $z$:\n\n$$\nz=1-2i\\\\\n\\bar{z}=1+2i\n$$\n"
+              }
+            ],
+            "publishedResponseAreas": [
+              {
+                "id": "9af1f1da-4975-41ff-b058-c6debf716aee",
+                "position": 0,
+                "universalResponseAreaId": "46fc910b-e799-4bbf-8252-28f9d94ad5bf",
+                "preResponseText": "$\\bar{z}\\bar{w}=$",
+                "Response": {
+                  "id": "fb133349-ce9a-4035-a3f1-64f1254448e0",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "8+i"
+                },
+                "responseType": "EXPRESSION",
+                "answer": "8+i"
+              }
+            ]
+          },
+          {
+            "publishedPartId": "79bca4bf-ac93-4fdb-97fc-44489b8528c5",
+            "publishedPartPosition": 5,
+            "publishedPartContent": "",
+            "publishedPartAnswerContent": "$$\nzw^{-1}=-\\frac{4}{5}+\\frac{7}{5}i\n$$\n",
+            "publishedWorkedSolutionSections": [
+              {
+                "id": "624d851e-9d92-4f8b-837e-5321ca7c3ae4",
+                "position": 0,
+                "title": "",
+                "content": "To simplify $\\frac{z}{w}$, we need to multiply the numerator and denominator by the complex conjugate of $w$:\n\n&#x20;&#x20;\n\n$$\n\\frac{z}{w}=\\frac{2+3i}{1+2i}=\\frac{2+3i}{1+2i}\\times\\frac{1-2i}{1-2i}\n$$\n"
+              }
+            ],
+            "publishedResponseAreas": [
+              {
+                "id": "45a1c6ed-8bb0-4491-ad06-f9f03fad1894",
+                "position": 0,
+                "universalResponseAreaId": "c4158b38-ad92-41f2-8767-fd985a7c0c30",
+                "preResponseText": "$zw^{-1}=$",
+                "Response": {
+                  "id": "62835ce5-0d1f-4845-b4e7-46fa77b38ecc",
+                  "responseType": "EXPRESSION",
+                  "config": { "allowPhoto": true, "allowHandwrite": true },
+                  "answer": "-0.8 + 1.4i"
+                },
+                "responseType": "EXPRESSION",
+                "answer": "-0.8 + 1.4i"
               }
             ]
           }
         ]
       },
-      "questionAccessInformation": {
-        "estimatedMinimumTime": "15 minutes",
-        "estimaredMaximumTime": "25 minutes",
-        "timeTaken": "less than one minute",
-        "accessStatus": "too little time spent on this question.",
-        "markedDone": "",
-        "currentPart": {
-          "id": "8e35723d-e549-4dbd-97ca-29c1134ceb69",
-          "position": 0
-        }
-      }
+      "questionAccessInformation": null
     },
-    "conversation_id": "49f97c01-9a46-4773-9722-f8d231c55209",
+    "conversation_id": "2bd298bb-0127-40e8-85c5-895edaafff6b",
     "agent_type": "informational"
   }
 }

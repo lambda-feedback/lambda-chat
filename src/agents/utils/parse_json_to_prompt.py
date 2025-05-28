@@ -146,12 +146,11 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
                           questionAccessInformation: Optional[QuestionAccessInformation]
                         ) -> Optional[str]:
 
-    if not questionInformation or not questionAccessInformation:
+    if not questionInformation:
         return "There must have been an error in fetching the question details. So ask me about the question I am working on such that you can still help me."
     
     questionSubmissionSummary = [StudentWorkResponseArea(**submissionsSummary) for submissionsSummary in questionSubmissionSummary]
     questionInformation = QuestionDetails(**questionInformation)
-    questionAccessInformation = QuestionAccessInformation(**questionAccessInformation)
 
     def format_response_area_details(responseArea: ResponseAreaDetails, studentSummary: List[StudentWorkResponseArea]) -> str:
         submissionDetails = "\n".join(
@@ -174,7 +173,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         (Keep it Secret) Expected Answer: {responseArea.answer};
         {submissionDetails}"""
 
-    def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
+    def format_part_details(part: PartDetails, currentPart: Optional[CurrentPart], summary: List[StudentWorkResponseArea]) -> str:
         if not part:
             return ''
 
@@ -191,30 +190,51 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
                 ]
             ) if part.publishedWorkedSolutionSections else f"No worked solutions for part ({convert_index_to_lowercase_letter(part.publishedPartPosition)});"
         )
-        return f"""
+        if currentPart:
+            return f"""
     # {'[CURRENTLY WORKING ON] ' if currentPart.id == part.publishedPartId else ''}Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
     {f"Time spent on this part: {currentPart.timeTakenPart if currentPart.timeTakenPart is not None else 'No recorded duration'}" if currentPart.id == part.publishedPartId else ''}
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
     {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer for this part.'}
     {workedSolutions}
-"""
+    """
+        else:
+            return f"""
+     # Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
+    Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
+    {responseAreas}
+    {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer for this part.'}
+    {workedSolutions}
+    """
+    
+    if questionAccessInformation:
+        questionAccessInformation = QuestionAccessInformation(**questionAccessInformation)
 
-    questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
-    Maths equations are in KaTex format, preserve them the same. Use British English spellings.
+        questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
+        Maths equations are in KaTex format, preserve them the same. Use British English spellings.
 {f'# Question Set {questionInformation.setNumber + 1}: {questionInformation.setName};' if ((questionInformation.setName is not None) and (questionInformation.setNumber is not None)) else ''}
 # Question {f' {questionInformation.setNumber + 1}.{questionInformation.questionNumber + 1}' if ((questionInformation.setNumber is not None) and (questionInformation.questionNumber is not None)) else ''}: {questionInformation.questionTitle};
     Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};
     Description of Question: {questionInformation.questionContent};
     Expected Time to Complete the Question: {f'{questionInformation.durationLowerBound} - {questionInformation.durationUpperBound} min;' if questionInformation.durationLowerBound and questionInformation.durationUpperBound else 'No specified duration.'}
     Time Spent on the Question today: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''} {f'{questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else ''}; 
+        """
+    else:
+        questionDetails = f"""This is the question I am currently working on. Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
+    Maths equations are in KaTex format, preserve them the same. Use British English spellings.
+{f'# Question Set {questionInformation.setNumber + 1}: {questionInformation.setName};' if ((questionInformation.setName is not None) and (questionInformation.setNumber is not None)) else ''}
+# Question {f' {questionInformation.setNumber + 1}.{questionInformation.questionNumber + 1}' if ((questionInformation.setNumber is not None) and (questionInformation.questionNumber is not None)) else ''}: {questionInformation.questionTitle};
+    Guidance to Solve the Question: {questionInformation.questionGuidance or 'None'};
+    Description of Question: {questionInformation.questionContent};
+    Expected Time to Complete the Question: {f'{questionInformation.durationLowerBound} - {questionInformation.durationUpperBound} min;' if questionInformation.durationLowerBound and questionInformation.durationUpperBound else 'No specified duration.'}
     """
 
     partsDetails = "\n".join(
         [
             format_part_details(
                 part,
-                questionAccessInformation.currentPart,
+                questionAccessInformation.currentPart if questionAccessInformation else None,
                 questionSubmissionSummary
             ) for part in questionInformation.parts
         ]
