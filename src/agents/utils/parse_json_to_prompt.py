@@ -146,7 +146,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
                           questionAccessInformation: Optional[QuestionAccessInformation]
                         ) -> Optional[str]:
 
-    if not questionInformation or not questionAccessInformation:
+    if not questionInformation:
         return "There must have been an error in fetching the question details. So ask me about the question I am working on such that you can still help me."
     
     questionSubmissionSummary = [StudentWorkResponseArea(**submissionsSummary) for submissionsSummary in questionSubmissionSummary]
@@ -174,7 +174,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
         (Keep it Secret) Expected Answer: {responseArea.answer};
         {submissionDetails}"""
 
-    def format_part_details(part: PartDetails, currentPart: CurrentPart, summary: List[StudentWorkResponseArea]) -> str:
+    def format_part_details(part: PartDetails, currentPart: Optional[CurrentPart], summary: List[StudentWorkResponseArea]) -> str:
         if not part:
             return ''
 
