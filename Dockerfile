@@ -14,11 +14,6 @@ RUN dnf install -y git \
       python3-devel \
     && dnf clean all
 
-# Install dependencies into the virtual environment
-# Install build tools (gcc, make, etc.) and python3-devel for native builds
-RUN yum install -y gcc make gcc-c++
-RUN yum install -y python3-devel
-
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
