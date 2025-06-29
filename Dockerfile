@@ -5,7 +5,14 @@ FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 # Set working directory
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-RUN pip install --upgrade pip && yum install -y git
+RUN pip install --upgrade pip 
+RUN dnf install -y git \
+    && dnf install -y \
+      gcc \
+      gcc-c++ \
+      make \
+      python3-devel \
+    && dnf clean all
 
 # Install dependencies into the virtual environment
 # Install build tools (gcc, make, etc.) and python3-devel for native builds
