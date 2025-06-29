@@ -8,6 +8,10 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 RUN pip install --upgrade pip && yum install -y git
 
 # Install dependencies into the virtual environment
+# Install build tools (gcc, make, etc.) and python3-devel for native builds
+RUN yum install -y gcc make
+RUN yum install -y python3-devel
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
