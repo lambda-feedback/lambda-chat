@@ -202,7 +202,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     {f"Time spent on this part: {currentPart.timeTakenPart if currentPart.timeTakenPart is not None else 'No recorded duration'}" if currentPart.id == part.publishedPartId else ''}
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
-    {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer for this part.'}
+    {f'Final Part Expected Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct expected answer for this part.'}
     {workedSolutions}
     """
         else:
@@ -210,14 +210,14 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
      # Part ({convert_index_to_lowercase_letter(part.publishedPartPosition)}):
     Part Content: {part.publishedPartContent.strip() if part.publishedPartContent else 'No content'};
     {responseAreas}
-    {f'Final Part Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct answer for this part.'}
+    {f'Final Part Expected Answer: {part.publishedPartAnswerContent}' if part.publishedPartAnswerContent else 'No direct expected answer for this part.'}
     {workedSolutions}
     """
     
     if questionAccessInformation:
         questionAccessInformation = QuestionAccessInformation(**questionAccessInformation)
 
-        questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
+        questionDetails = f"""This is the question I am currently working on. I am currently working on Part ({convert_index_to_lowercase_letter(questionAccessInformation.currentPart.position)}). Below, you'll find its details, including the parts of the question, my responses for each response area, the expected correct answers, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
         Maths equations are in KaTex format, preserve them the same. Use British English spellings.
 {f'# Question Set {questionInformation.setNumber + 1}: {questionInformation.setName};' if ((questionInformation.setName is not None) and (questionInformation.setNumber is not None)) else ''}
 # Question {f' {questionInformation.setNumber + 1}.{questionInformation.questionNumber + 1}' if ((questionInformation.setNumber is not None) and (questionInformation.questionNumber is not None)) else ''}: {questionInformation.questionTitle};
@@ -227,7 +227,7 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
     Time Spent on the Question today: {questionAccessInformation.timeTaken or 'No recorded duration'} {f'which is {questionAccessInformation.accessStatus}' if questionAccessInformation.accessStatus else ''} {f'{questionAccessInformation.markedDone}' if questionAccessInformation.markedDone else ''}; 
         """
     else:
-        questionDetails = f"""This is the question I am currently working on. Below, you'll find its details, including the parts of the question, my responses for each response area, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
+        questionDetails = f"""This is the question I am currently working on. Below, you'll find its details, including the parts of the question, my responses for each response area, the expected correct answers, and the feedback I received. This information highlights my efforts and progress so far. Use this this information to inform your understanding about the question materials provided to me and my work on them.
     Maths equations are in KaTex format, preserve them the same. Use British English spellings.
 {f'# Question Set {questionInformation.setNumber + 1}: {questionInformation.setName};' if ((questionInformation.setName is not None) and (questionInformation.setNumber is not None)) else ''}
 # Question {f' {questionInformation.setNumber + 1}.{questionInformation.questionNumber + 1}' if ((questionInformation.setNumber is not None) and (questionInformation.questionNumber is not None)) else ''}: {questionInformation.questionTitle};
