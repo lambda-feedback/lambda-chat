@@ -154,9 +154,9 @@ def parse_json_to_prompt( questionSubmissionSummary: Optional[List[StudentWorkRe
 
     # TODO: ONLY FOR EXPERIMENT, REMOVE LATER
     #  if set number is even (2 or 4), then allow context, else do not allow context
-    if questionInformation.setNumber is not None:
-        if (questionInformation.setNumber + 1) % 2 != 0:
-            return "You are unaware of the question details. Ask me about the question I am working on such that you can help me. Use British English spellings."
+    # if questionInformation.setNumber is not None:
+    #     if (questionInformation.setNumber + 1) % 2 != 0:
+    #         return "You are unaware of the question details. Ask me about the question I am working on such that you can help me. Use British English spellings."
 
     def format_response_area_details(responseArea: ResponseAreaDetails, studentSummary: List[StudentWorkResponseArea]) -> str:
         submissionDetails = "\n".join(
