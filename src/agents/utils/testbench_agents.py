@@ -9,7 +9,7 @@ try:
     from ..informational_agent.informational_prompts import \
         informational_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
 except ImportError:
-    from agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
+    from src.agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
     from src.agents.base_agent.base_agent import invoke_base_agent
     from src.agents.informational_agent.informational_agent import InformationalAgent, invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
@@ -18,7 +18,7 @@ except ImportError:
 
 # File path for the input text
 path = "src/agents/utils/"
-input_file = path + "example_inputs/" + "example_input_1.json"
+input_file = path + "example_inputs/" + "example_input_6.json"
 
 """
  STEP 1: Read the USER INFO from the WEB client from a file
@@ -127,10 +127,10 @@ if __name__ == "__main__":
             f.write("message\t response\t prompt_missing\t prompt\n")
 
     # NOTE: #### This is the testing message!! #####
-    message = "How to tackle part a?" 
+    message = "What is the question?" 
     # NOTE: ########################################
 
-    index_count = 5 # Number of prompts to be removed for testing (-1 if no removal)
+    index_count = -1 # Number of prompts to be removed for testing (-1 if no removal)
     indices = range(0, index_count) if index_count > -1 else [-1]
     for i in indices:
         # if i == 16:

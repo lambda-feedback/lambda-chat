@@ -31,7 +31,7 @@ except ImportError:
   from src.agents.informational_agent.informational_agent import invoke_informational_agent
   from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
   from src.agents.google_learnLM_agent.google_learnLM_agent import invoke_google_learnlm_agent
-  from agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
+  from src.agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
 import os
 
 

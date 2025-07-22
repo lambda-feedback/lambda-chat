@@ -8,7 +8,7 @@ try:
     from .agents.socratic_agent.socratic_agent import invoke_socratic_agent
 except ImportError:
     from src.module_response import Result, Params
-    from agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
+    from src.agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
     from src.agents.informational_agent.informational_agent import invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
 import time
