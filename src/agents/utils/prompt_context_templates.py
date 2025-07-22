@@ -73,7 +73,7 @@ Please tell me about the question you're working on. I'll use British English sp
 - Description: {content}
 {duration_text}
 
-> Note: Mathematical equations must be in KaTeX format. British English spellings must be used.
+> Note: Mathematical equations are in KaTeX format, preserve them the same. Use British English spellings.
 
 ---
 """
