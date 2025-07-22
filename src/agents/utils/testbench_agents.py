@@ -2,14 +2,14 @@ import json
 import time
 import os
 try:
-    from .parse_json_to_prompt import parse_json_to_prompt
+    from .parse_json_context_to_prompt import parse_json_to_prompt
     from ..base_agent.base_agent import invoke_base_agent
     from ..informational_agent.informational_agent import InformationalAgent, invoke_informational_agent
     from ..socratic_agent.socratic_agent import invoke_socratic_agent
     from ..informational_agent.informational_prompts import \
         informational_role_prompt, conv_pref_prompt, update_conv_pref_prompt, summary_prompt, update_summary_prompt
 except ImportError:
-    from src.agents.utils.parse_json_to_prompt import parse_json_to_prompt
+    from agents.utils.parse_json_context_to_prompt import parse_json_to_prompt
     from src.agents.base_agent.base_agent import invoke_base_agent
     from src.agents.informational_agent.informational_agent import InformationalAgent, invoke_informational_agent
     from src.agents.socratic_agent.socratic_agent import invoke_socratic_agent
@@ -18,7 +18,7 @@ except ImportError:
 
 # File path for the input text
 path = "src/agents/utils/"
-input_file = path + "example_inputs/" + "example_input_7.json"
+input_file = path + "example_inputs/" + "example_input_1.json"
 
 """
  STEP 1: Read the USER INFO from the WEB client from a file
@@ -56,9 +56,10 @@ def testbench_agents(message, remove_index, agent_type = "informational", inform
                 question_access_information
             )
             # print("Question Response Details Prompt:", question_response_details_prompt, "\n\n")
+            print("------- Question Submission Summary:", len(question_response_details_prompt), "\n\n")
 
-        if "agent_type" in params:
-            agent_type = params["agent_type"]
+        # if "agent_type" in params:
+        #     agent_type = params["agent_type"]
         if "conversation_id" in params:
             conversation_id = params["conversation_id"]
         else:
@@ -81,10 +82,15 @@ def testbench_agents(message, remove_index, agent_type = "informational", inform
             governance_prompt = [item + '.' for item in role_prompt_components[-1].split("## Governance:\n")[1].split(".") if item]
             prompts = [main_prompt] + teaching_methods + key_qualities + flexibility_prompt + governance_prompt
             
+            
             # Remove one of the prompts to test the agent's performance
-            prompt_missing = prompts[remove_index]
-            print("Number of prompts:", len(prompts), ", current index:", remove_index, ", prompt removed:", prompt_missing)
-            prompts.remove(prompt_missing)
+            prompt_missing = "None"
+            if remove_index >= len(prompts):
+                raise Exception("Remove index exceeds the number of prompts available.")
+            if remove_index != -1:
+                prompt_missing = prompts[remove_index]
+                print("Number of prompts:", len(prompts), ", current index:", remove_index, ", prompt removed:", prompt_missing)
+                prompts.remove(prompt_missing)
 
             updated_prompt = "\n\n".join(prompts)
 
@@ -118,22 +124,23 @@ if __name__ == "__main__":
     # create the file if it doesnt exist
     if not os.path.exists(file):
         with open(file, "w") as f:
-            f.write("message\t response\t prompt\t prompt_missing\n")
+            f.write("message\t response\t prompt_missing\t prompt\n")
 
     # NOTE: #### This is the testing message!! #####
-    message = "How do you tackle the worked solution for part c?" 
+    message = "How to tackle part a?" 
     # NOTE: ########################################
 
-    index_count = 23 # Number of sections in the informational agent prompt
-    for i in range(0, index_count):
-        if i == 16:
-            time.sleep(60)
+    index_count = 5 # Number of prompts to be removed for testing (-1 if no removal)
+    indices = range(0, index_count) if index_count > -1 else [-1]
+    for i in indices:
+        # if i == 16:
+        #     time.sleep(60)
         message, response, prompt, prompt_missing = testbench_agents(message, remove_index=i)
 
         with open(file, "a") as f:
             # append another line to the file
             if prompt_missing != " ":
-                f.write(message + "\t" + ' '.join(response['output'].split('\n')) + "\t" + ' '.join(prompt.split('\n')) + "\t" +prompt_missing + "\n")
+                f.write(message + "\t" + ' '.join(response['output'].split('\n')) + "\t" + prompt_missing + "\t" + ' '.join(prompt.split('\n')) + "\n")
                 print("File written successfully!")
 
 
